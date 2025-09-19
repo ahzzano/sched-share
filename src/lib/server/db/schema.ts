@@ -3,7 +3,8 @@ import { pgTable, serial, integer, text } from 'drizzle-orm/pg-core';
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
 	name: text('name'),
-    group: serial('group_id').references(() => groups.id)
+    password: serial('password'),
+    group: serial('group_id').references(() => groups.id),
 });
 
 export const groups = pgTable('group', {
