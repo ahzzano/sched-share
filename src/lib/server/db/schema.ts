@@ -18,8 +18,8 @@ export const items = pgTable('items', {
     name: text('name'),
     // schedule: serial('schedule_id').references(() => schedules.id).notNull(),
     user: serial('user_id').references(() => users.id).notNull(),
-    start: text('start-time'),
-    end: text('start-time'),
+    start: text('start_time'),
+    end: text('end_time'),
     monday: boolean('monday'),
     tuesday: boolean('tuesday'),
     wednesday: boolean('wednesday'),
@@ -42,3 +42,5 @@ export const itemRelations = relations(items, ({one}) => ({
 }))
 
 export type NewUser = typeof users.$inferInsert
+export type NewItem = typeof items.$inferInsert
+

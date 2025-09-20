@@ -7,10 +7,10 @@ export const userSchema = z.object({
 })
 
 export const itemSchema = z.object({
+    user: z.number(),
     name: z.string().nonempty(),
-    startTime: z.string().nonempty(),
-    endTime: z.string().nonempty(),
-
+    start: z.string().nonempty(),
+    end: z.string().nonempty(),
     sunday: z.boolean(),
     monday: z.boolean(),
     tuesday: z.boolean(),

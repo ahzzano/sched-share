@@ -43,12 +43,12 @@ Add Schedule
                 }}
                 class="flex flex-col"
             >
-                <input type="hidden" value=""/>
+                <input type="hidden" name="userId" value={user.id}/>
 
                 <input type="text" name="itemName"/>
                 <div>
-                    <input type="time" name="startTime"/>
-                    <input type="time" name="endTime"/>
+                    <input type="time" name="startTime" required/>
+                    <input type="time" name="endTime" required/>
                 </div>
 
                 <span>
@@ -74,6 +74,12 @@ Add Schedule
                     Add Item
                 </button>
             </form>
+
+            {#each user.items as item}
+                <span>{item.name}</span>
+                <span>{item.start}</span>
+                <span>{item.end}</span>
+            {/each}
         </div>
     {/each}
 </div>

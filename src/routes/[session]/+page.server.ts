@@ -1,9 +1,11 @@
 import { db } from "$lib/server/db"
-import { groups, users, type NewUser } from "$lib/server/db/schema"
+import { groups, items, users, type NewUser } from "$lib/server/db/schema"
 import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
-import { userSchema } from "$lib/server/zodSchemas"
+import { itemSchema, userSchema } from "$lib/server/zodSchemas"
+import { start } from "repl"
+import { success } from "zod"
 
 export const actions = {
     addUser: async ({ request, params }) => {
@@ -34,8 +36,36 @@ export const actions = {
     addItemToSchedule: async ({ request }) => {
         const form = await request.formData()
         const name = form.get('itemName')
+        const id = form.get('userId')
+        if (!id) {
+            return fail(404)
+        }
         const startTime = form.get('startTime')
         const endTime = form.get('endTime')
+        console.log(startTime, endTime)
+
+        const result = itemSchema.safeParse({
+            user: parseInt(id.toString()),
+            name: name,
+            start: startTime,
+            end: endTime,
+            sunday: form.get('sunday') === 'on',
+            monday: form.get('monday') === 'on',
+            tuesday: form.get('tuesday') === 'on',
+            wednesday: form.get('wednesday') === 'on',
+            thursday: form.get('thursday') === 'on',
+            friday: form.get('friday') === 'on',
+            saturday: form.get('saturday') === 'on',
+        })
+
+        if (result.error) {
+            return fail(404)
+        }
+
+        console.log(result.data)
+        await db.insert(items).values(result.data)
+
+        return {success: true}
     }
 } satisfies Actions
 
@@ -46,17 +76,19 @@ export const load: PageLoad = async ({ params }) => {
         .from(groups)
         .where(eq(groups.id, sessId))
 
-    const groupUsers = await db.query.users.findMany({
-        with: {
-            items: true
-        }
-    })
-
     if (group.length == 0) {
         return error(404, {
             message: 'Group not found'
         })
     }
+
+    const groupUsers = await db.query.users.findMany({
+        with: {
+            items: true
+        },
+        where: eq(users.group, sessId)
+    })
+
     return {
         session: params.session,
         users: groupUsers
