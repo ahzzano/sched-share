@@ -82,6 +82,7 @@ export const actions = {
             return fail(404)
         }
 
+        await db.delete(items).where(eq(items.user, parseInt(id.toString())))
         await db.delete(users).where(eq(users.id, parseInt(id.toString())))
     }
 
