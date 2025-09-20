@@ -29,7 +29,7 @@ Add Schedule
     </form>
 </div>
 
-<div class="grid-cols-5 grid gap-3">
+<div class="grid-cols-3 grid gap-3">
     {#each users as user}
         <div>
             <form action="?/deleteUser" method="POST" use:enhance={() => {
