@@ -32,7 +32,8 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
-		"postgres": "^3.4.5"
+		"postgres": "^3.4.5",
+		"zod": "^4.1.9"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [

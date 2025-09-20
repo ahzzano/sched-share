@@ -3,7 +3,7 @@ import { pgTable, serial, integer, text } from 'drizzle-orm/pg-core';
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
 	name: text('name'),
-    password: serial('password'),
+    password: text('password'),
     group: serial('group_id').references(() => groups.id),
 });
 
@@ -24,3 +24,5 @@ export const items = pgTable('items', {
     end: text('start-time'),
     days: text('days') 
 })
+
+export type NewUser = typeof users.$inferInsert
