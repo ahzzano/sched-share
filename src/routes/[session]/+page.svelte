@@ -29,19 +29,41 @@ Add Schedule
     </form>
 </div>
 
-<div class="grid-cols-3 grid gap-3">
+<div class="flex gap-5 p-5">
     {#each users as user}
-        <div>
-            <form action="?/deleteUser" method="POST" use:enhance={() => {
-                return async ({ update }) => {
-                    invalidateAll()
-                    await update()
-                }
-            }}>
-                <input type="hidden" name="id" value={user.id}/>
-                <button>Delete</button>
-            </form>
-            <span>{user.name}</span>
+        <div class="p-4 border-black border-2 rounded-2xl">
+            <div class="flex flex-fil">
+                <span class="grow-1">{user.name}</span>
+                <form action="?/deleteUser" method="POST" use:enhance={() => {
+                    return async ({ update }) => {
+                        invalidateAll()
+                        await update()
+                    }
+                }}>
+                    <input type="hidden" name="id" value={user.id}/>
+                    <button>Delete</button>
+                </form>
+            </div>
+            {#each user.items as item}
+                <div class="flex gap-2">
+                    <span class="grow-0">{item.name}</span>
+                    <span class="grow-1">{item.start}-{item.end}</span>
+
+                    <form 
+                        class="grow-2"
+                        action="?/deleteSchedule" 
+                        method="POST" 
+                        use:enhance={() => {
+                            return async ({ update }) => {
+                                invalidateAll()
+                                await update()
+                            }
+                        }}>
+                        <input type="hidden" name="id" value={item.id}/>
+                        <button>Delete</button>
+                    </form>
+                </div>
+            {/each}
             <form
                 method="POST"
                 action="?/addItemToSchedule"
@@ -51,19 +73,22 @@ Add Schedule
                         await update()
                     }
                 }}
-                class="flex flex-col"
+                class="flex flex-col gap-2"
             >
                 <input type="hidden" name="userId" value={user.id}/>
 
-                <input type="text" name="itemName"/>
-                <div>
-                    <input type="time" name="startTime" required/>
-                    <input type="time" name="endTime" required/>
+                <input type="text" name="itemName" class="input" placeholder="Add Item"/>
+                <div class="flex gap-2">
+                    <div class="input">
+                        <span class="label">Start</span>
+                        <input type="time" name="startTime" required />
+                    </div>
+                    <div class="input">
+                        <span class="label">End</span>
+                        <input type="time" name="endTime" required />
+                    </div>
+                
                 </div>
-
-                <span>
-                    Days
-                </span>
 
                 <Daypicker/>
 
@@ -72,21 +97,6 @@ Add Schedule
                 </button>
             </form>
 
-            {#each user.items as item}
-                <span>{item.name}</span>
-                <span>{item.start}</span>
-                <span>{item.end}</span>
-
-                <form action="?/deleteSchedule" method="POST" use:enhance={() => {
-                    return async ({ update }) => {
-                        invalidateAll()
-                        await update()
-                    }
-                }}>
-                    <input type="hidden" name="id" value={item.id}/>
-                    <button>Delete</button>
-                </form>
-            {/each}
         </div>
     {/each}
 </div>
