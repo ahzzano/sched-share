@@ -79,6 +79,16 @@ Add Schedule
                 <span>{item.name}</span>
                 <span>{item.start}</span>
                 <span>{item.end}</span>
+
+                <form action="?/deleteSchedule" method="POST" use:enhance={() => {
+                    return async ({ update }) => {
+                        invalidateAll()
+                        await update()
+                    }
+                }}>
+                    <input type="hidden" name="id" value={item.id}/>
+                    <button>Delete</button>
+                </form>
             {/each}
         </div>
     {/each}

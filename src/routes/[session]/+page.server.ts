@@ -63,8 +63,18 @@ export const actions = {
         console.log(result.data)
         await db.insert(items).values(result.data)
 
-        return {success: true}
+        return { success: true }
+    },
+    deleteSchedule: async ({ request }) => {
+        const form = await request.formData()
+        const id = form.get('id')
+        if (!id) {
+            return fail(404)
+        }
+
+        await db.delete(items).where(eq(items.id, parseInt(id.toString())))
     }
+
 } satisfies Actions
 
 export const load: PageLoad = async ({ params }) => {
