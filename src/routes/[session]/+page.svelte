@@ -4,3 +4,10 @@
 </script>
 
 {data.session}
+
+Add Schedule 
+<div>
+    <form>
+
+    </form>
+</div>
