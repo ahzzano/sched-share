@@ -31,6 +31,15 @@ Add Schedule
 <div class="grid-cols-5 grid gap-3">
     {#each users as user}
         <div>
+            <form action="?/deleteUser" method="POST" use:enhance={() => {
+                return async ({ update }) => {
+                    invalidateAll()
+                    await update()
+                }
+            }}>
+                <input type="hidden" name="id" value={user.id}/>
+                <button>Delete</button>
+            </form>
             <span>{user.name}</span>
             <form
                 method="POST"

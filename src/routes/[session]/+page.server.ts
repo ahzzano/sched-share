@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
+import { request } from "http"
 
 export const actions = {
     addUser: async ({ request, params }) => {
@@ -73,6 +74,15 @@ export const actions = {
         }
 
         await db.delete(items).where(eq(items.id, parseInt(id.toString())))
+    },
+    deleteUser: async({request}) => {
+        const form = await request.formData()
+        const id = form.get('id')
+        if (!id) {
+            return fail(404)
+        }
+
+        await db.delete(users).where(eq(users.id, parseInt(id.toString())))
     }
 
 } satisfies Actions
