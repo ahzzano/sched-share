@@ -14,7 +14,8 @@ export const groups = pgTable('group', {
 })
 
 export const items = pgTable('items', {
-    name: serial('id'),
+    id: serial('id'),
+    name: text('name'),
     // schedule: serial('schedule_id').references(() => schedules.id).notNull(),
     user: serial('user_id').references(() => users.id).notNull(),
     start: text('start-time'),
