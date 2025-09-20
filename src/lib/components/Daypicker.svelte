@@ -3,8 +3,7 @@
 
 </script>
 
-<div class="join-horizontal join">
-
+<div class="join-horizontal join w-full">
     {#each ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"] as day, i}
         <input type="hidden" name={day} value={selectedDays[i] == true ? 'on' : null}/>
         <button 
