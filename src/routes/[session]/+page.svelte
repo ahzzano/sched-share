@@ -6,7 +6,6 @@
     let { data }: PageProps = $props();
     // let users = $state(data.users);
     const users = $derived(data.users)
-    console.log(users);
 </script>
 
 {data.session}
@@ -19,9 +18,7 @@ Add Schedule
         use:enhance={() => {
             return async ({ update, result }) => {
                 invalidateAll()
-                if (result.type === "success") {
-                    await update();
-                }
+                await update();
             };
         }}
     >
@@ -31,8 +28,11 @@ Add Schedule
     </form>
 </div>
 
-{#each users as user}
-    <div>
-        <span>{user.name}</span>
-    </div>
-{/each}
+<div class="grid-cols-3 grid">
+    {#each users as user}
+        <div>
+            <span>{user.name}</span>
+        </div>
+    {/each}
+</div>
+
