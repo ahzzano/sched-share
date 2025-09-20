@@ -64,22 +64,8 @@ Add Schedule
                 <span>
                     Days
                 </span>
-                <Daypicker></Daypicker>
 
-                <input type="checkbox" name="sunday"/>
-                <label for="sunday"> Sunday </label>
-                <input type="checkbox" name="monday"/>
-                <label for="monday"> Monday </label>
-                <input type="checkbox" name="tuesday"/>
-                <label for="tuesday"> Tuesday </label>
-                <input type="checkbox" name="wednesday"/>
-                <label for="wednesday"> Wednesday </label>
-                <input type="checkbox" name="thursday"/>
-                <label for="thursday"> Thursday </label>
-                <input type="checkbox" name="friday"/>
-                <label for="friday"> Friday </label>
-                <input type="checkbox" name="saturday"/>
-                <label for="saturday"> Saturday </label>
+                <Daypicker/>
 
                 <button>
                     Add Item

@@ -48,13 +48,13 @@ export const actions = {
             name: name,
             start: startTime,
             end: endTime,
-            sunday: form.get('sunday') === 'on',
-            monday: form.get('monday') === 'on',
-            tuesday: form.get('tuesday') === 'on',
-            wednesday: form.get('wednesday') === 'on',
-            thursday: form.get('thursday') === 'on',
-            friday: form.get('friday') === 'on',
-            saturday: form.get('saturday') === 'on',
+            sunday: form.get('Sun') === 'on',
+            monday: form.get('Mon') === 'on',
+            tuesday: form.get('Tues') === 'on',
+            wednesday: form.get('Wed') === 'on',
+            thursday: form.get('Thurs') === 'on',
+            friday: form.get('Fri') === 'on',
+            saturday: form.get('Sat') === 'on',
         })
 
         if (result.error) {
