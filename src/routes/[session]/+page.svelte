@@ -1,6 +1,7 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
+    import Daypicker from "$lib/components/Daypicker.svelte";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
@@ -63,6 +64,7 @@ Add Schedule
                 <span>
                     Days
                 </span>
+                <Daypicker></Daypicker>
 
                 <input type="checkbox" name="sunday"/>
                 <label for="sunday"> Sunday </label>
