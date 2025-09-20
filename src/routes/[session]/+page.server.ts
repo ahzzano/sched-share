@@ -29,9 +29,14 @@ export const actions = {
         const data: NewUser = result.data
         type newUserResult = typeof users.$inferSelect
         const newUser: newUserResult[] = await db.insert(users).values(data).returning()
-        return { success: true, newUser  }
+        return { success: true, newUser }
+    },
+    addItemToSchedule: async ({ request }) => {
+        const form = await request.formData()
+        const name = form.get('itemName')
+        const startTime = form.get('startTime')
+        const endTime = form.get('endTime')
     }
-
 } satisfies Actions
 
 export const load: PageLoad = async ({ params }) => {
@@ -41,10 +46,11 @@ export const load: PageLoad = async ({ params }) => {
         .from(groups)
         .where(eq(groups.id, sessId))
 
-    const groupUsers = await db
-        .select()
-        .from(users)
-        .where(eq(users.group, sessId))
+    const groupUsers = await db.query.users.findMany({
+        with: {
+            items: true
+        }
+    })
 
     if (group.length == 0) {
         return error(404, {

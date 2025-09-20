@@ -1,4 +1,5 @@
-import { pgTable, serial, integer, text } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { pgTable, serial, integer, text, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('user', {
 	id: serial('id').primaryKey(),
@@ -12,17 +13,31 @@ export const groups = pgTable('group', {
     name: text('name'),
 })
 
-export const schedules = pgTable('schedules', { 
-    id: serial('id'),
-    user: serial('user_id').references(() => users.id).notNull()
-})
-
 export const items = pgTable('items', {
     name: serial('id'),
-    schedule: serial('schedule_id').references(() => schedules.id).notNull(),
+    // schedule: serial('schedule_id').references(() => schedules.id).notNull(),
+    user: serial('user_id').references(() => users.id).notNull(),
     start: text('start-time'),
     end: text('start-time'),
-    days: text('days') 
+    monday: boolean('monday'),
+    tuesday: boolean('tuesday'),
+    wednesday: boolean('wednesday'),
+    thursday: boolean('thursday'),
+    friday: boolean('friday'),
+    saturday: boolean('saturday'),
+    sunday: boolean('sunday'),
 })
+
+export const userRelations = relations(users, ({many}) => ({
+    items: many(items)
+}))
+
+export const itemRelations = relations(items, ({one}) => ({
+    schedule: one(users, {
+        fields: [items.user],
+        references: [users.id]
+    })
+ 
+}))
 
 export type NewUser = typeof users.$inferInsert
