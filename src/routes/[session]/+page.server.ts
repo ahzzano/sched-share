@@ -4,8 +4,6 @@ import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
-import { start } from "repl"
-import { success } from "zod"
 
 export const actions = {
     addUser: async ({ request, params }) => {
