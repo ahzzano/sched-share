@@ -1,4 +1,3 @@
-<div class="w-full bg-gray-100">
+<div class="w-full bg-gray-100 navbar">
     Navbar
 </div>
-    re
