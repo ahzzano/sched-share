@@ -8,7 +8,7 @@
     let open = $state(false);
 </script>
 
-<Modal prompt="AddItem" title="New Item" bind:open={open}>
+<Modal prompt="Add New Item" title="New Item" bind:open={open}>
     <div class="w-full">
         <form
             method="POST"
