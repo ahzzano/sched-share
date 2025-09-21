@@ -66,11 +66,7 @@ Add Schedule
                     </div>
                 {/if}
 
-
-
-                <Modal prompt="Add Item" title="New Item">
-                    <AddItemForm {user} />
-                </Modal>
+                <AddItemForm {user} />
             </div>
         </div>
     {/each}

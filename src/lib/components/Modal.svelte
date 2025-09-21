@@ -1,8 +1,9 @@
 <script lang="ts">
-    let { children, prompt, title } = $props();
-    let isOpen = $state(false);
+    let { children, prompt, title, open = $bindable(true)} = $props();
+
+    let isOpen = $derived(open)
     function toggle() {
-        isOpen = !isOpen;
+        open = !open;
     }
 </script>
 
