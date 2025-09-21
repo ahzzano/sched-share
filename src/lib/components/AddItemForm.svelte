@@ -20,8 +20,8 @@
         <input type="hidden" name="userId" value={user.id} />
 
         <div class="input w-full">
-            <span class="label">Item Name</span>
-            <input type="text" name="itemName" placeholder="Add Item" />
+            <span class="label">Name</span>
+            <input type="text" name="itemName" placeholder="Studying..." />
         </div>
 
         <div class="flex gap-2">

@@ -3,14 +3,13 @@
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
     import Daypicker from "$lib/components/Daypicker.svelte";
+    import ItemSection from "$lib/components/ItemSection.svelte";
+    import Modal from "$lib/components/Modal.svelte";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
-    // let users = $state(data.users);
     const users = $derived(data.users);
 </script>
-
-{data.session}
 
 Add Schedule
 <div>
@@ -30,9 +29,9 @@ Add Schedule
     </form>
 </div>
 
-<div class="flex gap-5 p-5">
+<div class="grid grid-cols-1 md:grid-cols-3 items-start p-8 md:p-12 gap-4">
     {#each users as user}
-        <div class="card bg-base-100 shadow-sm w-128">
+        <div class="card bg-base-100 shadow-sm md:w-128">
             <div class="card-body">
                 <div class="card-title">
                     <span class="grow-1">{user.name}</span>
@@ -50,37 +49,28 @@ Add Schedule
                         <button>Delete</button>
                     </form>
                 </div>
-                {#each user.items as item}
-                    <div class="flex gap-2">
-                        <span class="grow-0">{item.name}</span>
-                        <span class="grow-1">{item.start}-{item.end}</span>
 
-                        <form
-                            class="grow-2"
-                            action="?/deleteSchedule"
-                            method="POST"
-                            use:enhance={() => {
-                                return async ({ update }) => {
-                                    invalidateAll();
-                                    await update();
-                                };
-                            }}
-                        >
-                            <input type="hidden" name="id" value={item.id} />
-                            <button>Delete</button>
-                        </form>
+                {#if user.items.length == 0}
+                    <div class=''>
+                        No items to be found
                     </div>
-                {/each}
+                {:else}
+                    <div class="join join-vertical">
+                        <ItemSection items={user.items.filter((item) => item.sunday)} title="Sunday"/>
+                        <ItemSection items={user.items.filter((item) => item.monday)} title="Monday"/>
+                        <ItemSection items={user.items.filter((item) => item.tuesday)} title="Tuesday"/>
+                        <ItemSection items={user.items.filter((item) => item.wednesday)} title="Wednesday"/>
+                        <ItemSection items={user.items.filter((item) => item.thursday)} title="Thursday"/>
+                        <ItemSection items={user.items.filter((item) => item.friday)} title="Friday"/>
+                        <ItemSection items={user.items.filter((item) => item.saturday)} title="Saturday"/>
+                    </div>
+                {/if}
 
-                <div class="dropdown">
-                    <div tabindex="0" role="button" class="btn m-1 w-full">Add Item</div>
-                    <div
-                        tabindex="0"
-                        class="dropdown-content menu bg-base-100 rounded-box z-1 p-2 shadow-sm"
-                    >
-                        <AddItemForm {user} />
-                    </div>
-                </div>
+
+
+                <Modal prompt="Add Item" title="New Item">
+                    <AddItemForm {user} />
+                </Modal>
             </div>
         </div>
     {/each}
