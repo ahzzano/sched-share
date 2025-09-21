@@ -110,6 +110,7 @@ export const load: PageLoad = async ({ params }) => {
 
     return {
         session: params.session,
+        group: group[0],
         users: groupUsers
     }
 }

@@ -19,3 +19,7 @@ export const itemSchema = z.object({
     friday: z.boolean(),
     saturday: z.boolean(),
 })
+
+export const sessionSchema = z.object({
+    name: z.string().nonempty().nonoptional()
+})

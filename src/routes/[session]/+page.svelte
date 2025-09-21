@@ -2,16 +2,21 @@
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
-    import Daypicker from "$lib/components/Daypicker.svelte";
     import ItemSection from "$lib/components/ItemSection.svelte";
-    import Modal from "$lib/components/Modal.svelte";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
     const users = $derived(data.users);
+    const group = $derived(data.group);
 </script>
 
-Add Schedule
+{#if group.name}
+    <span class="text-2xl">{group.name}</span>
+{:else}
+    <span class="text-2xl">No group name</span>
+{/if}
+
+<span> Add someone's schedule here </span>
 <div>
     <form
         method="POST"
@@ -23,8 +28,11 @@ Add Schedule
             };
         }}
     >
-        <input name="username" placeholder="username" />
-        <input name="password" type="password" />
+        <input
+            name="username"
+            placeholder="Username: Don Pedro"
+            class="input"
+        />
         <button>Add User</button>
     </form>
 </div>
@@ -51,18 +59,37 @@ Add Schedule
                 </div>
 
                 {#if user.items.length == 0}
-                    <div class=''>
-                        No items to be found
-                    </div>
+                    <div class="">No items to be found</div>
                 {:else}
                     <div class="join join-vertical">
-                        <ItemSection items={user.items.filter((item) => item.sunday)} title="Sunday"/>
-                        <ItemSection items={user.items.filter((item) => item.monday)} title="Monday"/>
-                        <ItemSection items={user.items.filter((item) => item.tuesday)} title="Tuesday"/>
-                        <ItemSection items={user.items.filter((item) => item.wednesday)} title="Wednesday"/>
-                        <ItemSection items={user.items.filter((item) => item.thursday)} title="Thursday"/>
-                        <ItemSection items={user.items.filter((item) => item.friday)} title="Friday"/>
-                        <ItemSection items={user.items.filter((item) => item.saturday)} title="Saturday"/>
+                        <ItemSection
+                            items={user.items.filter((item) => item.sunday)}
+                            title="Sunday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.monday)}
+                            title="Monday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.tuesday)}
+                            title="Tuesday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.wednesday)}
+                            title="Wednesday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.thursday)}
+                            title="Thursday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.friday)}
+                            title="Friday"
+                        />
+                        <ItemSection
+                            items={user.items.filter((item) => item.saturday)}
+                            title="Saturday"
+                        />
                     </div>
                 {/if}
 
