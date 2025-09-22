@@ -4,10 +4,12 @@
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
+    const users = $derived(data.users);
     const group = $derived(data.group);
+    const allItems = $derived([...data.users.map((user) => user.items)]);
 </script>
 
-<div class="w-full flex items-center justify-center mt-8 md:mt-16">
+<div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
     <div class="card shadow-sm rounded-2xl">
         <div class="card-body">
             <div class="flex flex-col text-left">
@@ -42,4 +44,19 @@
             </form>
         </div>
     </div>
+
+    <div class="card shadow-sm rounded-2xl">
+        <div class="card-body">
+            {#each users as user}
+                <span>{user.name}</span>
+            {/each}
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-8 w-full p-32">
+    <span>Time Slot</span>
+    {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
+        <span>{day}</span>
+    {/each}
 </div>
