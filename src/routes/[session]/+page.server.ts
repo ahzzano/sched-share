@@ -4,8 +4,13 @@ import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
-import { request } from "http"
-import { parse } from "path"
+
+type Item = typeof items.$inferSelect & { days: boolean[], start: Date, end: Date }
+type Slot = {
+    start: Date,
+    end: Date,
+    items: Item
+}
 
 export const actions = {
     addUser: async ({ request, params }) => {
@@ -106,6 +111,26 @@ function convertToDate(timeString: string) {
     return date
 }
 
+function isInSlot(item: Item, slotStart: Date): boolean {
+    const slotEnd = new Date(slotStart.getTime() + 30 * 60 * 1000); 
+    return item.start < slotEnd && item.end > slotStart
+}
+
+function generateSlots(items: Item[]): Date[] {
+    const slots = []
+    const base = new Date()
+    base.setHours(5, 0, 0, 0)
+    for (let i = 0; i < 24 * 2; i++) {
+        const time = new Date(base.getTime() + i * 30 * 60 * 1000);
+        const inSlot = items.map((item) => isInSlot(item, time)).reduce((acc, i) => acc || i, false)
+        if (inSlot) {
+            slots.push(time);
+        }
+    }
+    return slots;
+
+}
+
 export const load: PageLoad = async ({ params }) => {
     const sessId = parseInt(params.session)
 
@@ -144,11 +169,15 @@ export const load: PageLoad = async ({ params }) => {
         })),
     }))
 
+    const items = mappedUsers.map((user) => user.items).flat()
+    const slots = generateSlots(items)
+
     return {
         session: params.session,
         group: group[0],
         users: mappedUsers,
-        items: mappedUsers.map((user) => user.items).flat()
+        items: items,
+        slots: slots
     }
 }
 

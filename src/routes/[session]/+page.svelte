@@ -8,6 +8,7 @@
     const users = $derived(data.users);
     const group = $derived(data.group);
     const allItems = $derived(data.items);
+    const slots = $derived(data.slots);
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
@@ -62,11 +63,13 @@
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
             <span>{day}</span>
         {/each}
+        {#each slots as slot}
+            <div class="col-1">
+                {slot.getHours()}:{slot.getMinutes()}
+            </div>
+        {/each}
 
         {#each allItems as item}
-            <div class="col-1">
-                {item.start.getHours()} - {item.end.getHours()}
-            </div>
             {#each [0, 1, 2, 3, 4, 5, 6] as i}
                 {#if item.days[i]}
                     <div class="col-{i + 2}">
