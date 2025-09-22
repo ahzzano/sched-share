@@ -9,6 +9,7 @@
     const group = $derived(data.group);
     const allItems = $derived(data.items);
     const slots = $derived(data.slots);
+    const groups = $derived(data.groups);
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
@@ -57,7 +58,7 @@
     </div>
 </div>
 
-<div class="w-full p-32">
+<div class="w-full py-16 px-32">
     <div class="grid grid-cols-8">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
@@ -72,10 +73,20 @@
             </div>
         {/each}
 
-        {#each data.mondaySlots as slot, i}
-            {#if slot.items.length > 0}
-                <div class="col-3" style="grid-row-start: {i+1};">{slot.items[0].name}</div>
-            {/if}
+        {#each groups as group, col}
+            {#each group as slot, i}
+                {#if slot.items.length > 0}
+                    <div
+                        class="col-3 bg-amber-50"
+                        style="
+                        grid-col-start: {col}
+                        grid-row-start: {slot.start}; 
+                        grid-row-end: {i + 1 + slot.end}"
+                    >
+                        {slot.items[0].name}
+                    </div>
+                {/if}
+            {/each}
         {/each}
     </div>
 </div>
