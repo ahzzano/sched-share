@@ -5,11 +5,14 @@ import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
 
-type Item = typeof items.$inferSelect & { days: boolean[], start: Date, end: Date }
+type ParsedItem = Omit<typeof items.$inferSelect, "start" | "end"> & { days: boolean[]; start: Date; end: Date; }
 type Slot = {
     start: Date,
-    end: Date,
-    items: Item
+    ends: {
+        days: boolean[],
+        timeEnd: Date
+    }[]
+    items: number[]
 }
 
 export const actions = {
@@ -112,11 +115,11 @@ function convertToDate(timeString: string) {
 }
 
 function isInSlot(item: Item, slotStart: Date): boolean {
-    const slotEnd = new Date(slotStart.getTime() + 30 * 60 * 1000); 
+    const slotEnd = new Date(slotStart.getTime() + 30 * 60 * 1000);
     return item.start < slotEnd && item.end > slotStart
 }
 
-function generateSlots(items: Item[]): Date[] {
+function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
     const base = new Date()
     base.setHours(5, 0, 0, 0)
@@ -128,7 +131,22 @@ function generateSlots(items: Item[]): Date[] {
         }
     }
     return slots;
+}
 
+function assignSlots(items: ParsedItem[], slots: Date[]): Slot[] {
+    const toRet: Slot[] = []
+    for (const slot of slots) {
+        const relevantItems = items.filter((item) => isInSlot(item, slot))
+        const ends = relevantItems.map((item) => ( {days: item.days, timeEnd: item.end} ) );
+
+        toRet.push({
+            start: slot,
+            items: relevantItems.map((item) => item.id),
+            ends: ends
+        })
+
+    }
+    return toRet
 }
 
 export const load: PageLoad = async ({ params }) => {
@@ -177,7 +195,7 @@ export const load: PageLoad = async ({ params }) => {
         group: group[0],
         users: mappedUsers,
         items: items,
-        slots: slots
+        slots: assignSlots(items, slots)
     }
 }
 
