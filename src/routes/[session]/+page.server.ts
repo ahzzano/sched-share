@@ -154,15 +154,19 @@ function generateSubsets(slots: Date[], assignedSlots: ReturnType<typeof assignS
     for (let right = 0; right < assignedSlots.length; right++) {
         items = items.concat(assignedSlots[right].items)
 
-        if (assignedSlots[right].nItems != 0) {
+        if (assignedSlots[right].nItems == 0) {
             const ids = new Set();
             const uniqueItems = items.filter(({ id }) => !ids.has(id) && ids.add(id));
 
-            toRet.push({ start: left, end: right, items: uniqueItems })
+            if (items.length != 0) {
+                toRet.push({ start: left, end: right, items: uniqueItems })
+                console.log(items)
+                items = []
+            }
             left = right
-            items = []
         }
     }
+    console.log(toRet)
 
     return toRet
 }

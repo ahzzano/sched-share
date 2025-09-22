@@ -7,7 +7,6 @@
     let { data }: PageProps = $props();
     const users = $derived(data.users);
     const group = $derived(data.group);
-    const allItems = $derived(data.items);
     const slots = $derived(data.slots);
     const groups = $derived(data.groups);
 </script>
@@ -77,13 +76,13 @@
             {#each group as slot, i}
                 {#if slot.items.length > 0}
                     <div
-                        class="col-3 bg-amber-50"
+                        class="bg-amber-100 p-2 rounded-2xl"
                         style="
-                        grid-col-start: {col}
+                        grid-column: {col + 1};
                         grid-row-start: {slot.start}; 
-                        grid-row-end: {i + 1 + slot.end}"
+                        grid-row-end: {i + 1 + slot.end};"
                     >
-                        {slot.items[0].name}
+                        {slot.start} - {slot.end} {slot.items[0].name}
                     </div>
                 {/if}
             {/each}
