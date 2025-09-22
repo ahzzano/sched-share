@@ -127,12 +127,9 @@ function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
     const base = new Date()
     base.setHours(5, 0, 0, 0)
-    for (let i = 0; i < 24 * 2; i++) {
+    for (let i = 0; i < 9 * 2; i++) {
         const time = new Date(base.getTime() + i * 30 * 60 * 1000);
-        const inSlot = items.map((item) => isInSlot(item, time)).reduce((acc, i) => acc || i, false)
-        if (inSlot) {
-            slots.push(time);
-        }
+        slots.push(time)
     }
     return slots;
 }

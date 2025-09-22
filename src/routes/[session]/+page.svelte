@@ -65,7 +65,7 @@
         {/each}
         {#each slots as slot}
             <div class="col-1">
-                {slot.getHours()}:{slot.getMinutes()}
+                {slot.getHours()}:{slot.getMinutes().toString().padStart(2, "0")}
             </div>
         {/each}
 
