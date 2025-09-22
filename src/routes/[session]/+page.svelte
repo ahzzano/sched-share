@@ -1,12 +1,13 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
+    import AddItemForm from "$lib/components/AddItemForm.svelte";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
     const users = $derived(data.users);
     const group = $derived(data.group);
-    const allItems = $derived([...data.users.map((user) => user.items)]);
+    const allItems = $derived(data.users.map((user) => user.items).flat());
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
@@ -49,6 +50,7 @@
         <div class="card-body">
             {#each users as user}
                 <span>{user.name}</span>
+                <AddItemForm {user} />
             {/each}
         </div>
     </div>
@@ -58,5 +60,11 @@
     <span>Time Slot</span>
     {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
         <span>{day}</span>
+    {/each}
+
+    {#each allItems as item}
+        <div>
+            {item.start} - {item.end}
+        </div>
     {/each}
 </div>

@@ -149,8 +149,8 @@ export const load: PageLoad = async ({ params }) => {
         ...row,
         items: row.items.map((item) => ({
             ...item,
-            start: convertToPM(item.start),
-            end: convertToPM(item.end),
+            start: new Date(item.start),
+            end: new Date(item.end),
         }))
     }))
 
