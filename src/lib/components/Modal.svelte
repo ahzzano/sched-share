@@ -1,15 +1,23 @@
 <script lang="ts">
-    let { children, prompt, title, open = $bindable(true)} = $props();
+    let {
+        children,
+        hasPrompt = true,
+        prompt,
+        title,
+        open = $bindable(true),
+    } = $props();
 
-    let isOpen = $derived(open)
+    let isOpen = $derived(open);
     function toggle() {
         open = !open;
     }
 </script>
 
-<button class="btn" onclick={toggle}>
-    {prompt}
-</button>
+{#if hasPrompt}
+    <button class="btn" onclick={toggle}>
+        {prompt}
+    </button>
+{/if}
 
 {#if isOpen}
     <div class="modal modal-open">
