@@ -10,17 +10,19 @@
     const group = $derived(data.group);
 </script>
 
-{#if group.name}
-    <span class="text-2xl">{group.name}</span>
-{:else}
-    <span class="text-2xl">No group name</span>
-{/if}
+<div class="flex gap-2 w-full items-center justify-start md:p-12 p-8">
+    {#if group.name}
+        <span class="text-2xl">{group.name}</span>
+    {:else}
+        <span class="text-2xl">No Group Name</span>
+    {/if}
 
-<span> Add someone's schedule here </span>
-<div>
+    <span> Add someone's schedule here </span>
+
     <form
         method="POST"
         action="?/addUser"
+        class="ml-auto w-128"
         use:enhance={() => {
             return async ({ update, result }) => {
                 invalidateAll();
@@ -28,12 +30,14 @@
             };
         }}
     >
-        <input
-            name="username"
-            placeholder="Username: Don Pedro"
-            class="input"
-        />
-        <button>Add User</button>
+        <div class="join w-full">
+            <input
+                name="username"
+                placeholder="Username: Don Pedro"
+                class="input"
+            />
+            <button class="btn">Add User</button>
+        </div>
     </form>
 </div>
 
