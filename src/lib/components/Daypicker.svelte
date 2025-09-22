@@ -1,9 +1,9 @@
 <script lang="ts">
-    let { selectedDays = [false, false, false, false, false, false, false] } =
-        $props();
+    let selectedDays = [false, false, false, false, false, false, false];
+    let textToDisplay = ["S", "M", "T", "W", "T", "F", "S"];
 </script>
 
-<div class="w-full md:join flex flex-wrap">
+<div class="w-full join flex flex-wrap">
     {#each ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"] as day, i}
         <input
             type="hidden"
@@ -17,7 +17,7 @@
             onclick={() => (selectedDays[i] = !selectedDays[i])}
             type="button"
         >
-            {day}
+            {textToDisplay[i]}
         </button>
     {/each}
 </div>

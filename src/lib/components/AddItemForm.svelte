@@ -8,13 +8,13 @@
     let open = $state(false);
 </script>
 
-<Modal prompt="Add New Item" title="New Item" bind:open={open}>
+<Modal prompt="Add New Item" title="New Item" bind:open>
     <div class="w-full">
         <form
             method="POST"
             action="?/addItemToSchedule"
             use:enhance={() => {
-                open = false
+                open = false;
                 return async ({ update }) => {
                     invalidateAll();
                     await update();
@@ -32,7 +32,12 @@
             <div class="flex flex-col md:flex-row w-full gap-2">
                 <div class="input w-full">
                     <span class="label">Start</span>
-                    <input type="time" name="startTime" required />
+                    <input
+                        class="appearance-none"
+                        type="time"
+                        name="startTime"
+                        required
+                    />
                 </div>
                 <div class="input w-full">
                     <span class="label">End</span>

@@ -9,7 +9,7 @@
         <div class="hero-content text-center">
             <div class="max-w-md">
                 <h1 class="text-5xl">Welcome to <b>SchedShare!</b></h1>
-                <p class="py-8">
+                <p class="py-8 px-4 md:px-0">
                     A schedule sharing app for students to share your times
                     together
                 </p>
@@ -17,7 +17,7 @@
             </div>
         </div>
     </div>
-    <div class="flex">
+    <div class="flex flex-col md:flex-row w-5/6 md:w-full justify-center">
         <div class="card bg-base-100 shadow-sm md:w-128">
             <div class="card-body">
                 <h2 class="card-title">Joining a Group</h2>
@@ -37,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div class="divider divider-horizontal">OR</div>
+        <div class="divider md:divider-horizontal">OR</div>
         <div class="card bg-base-100 shadow-sm md:w-128">
             <div class="card-body">
                 <h2 class="card-title">Creating a Group</h2>

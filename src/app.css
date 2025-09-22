@@ -12,3 +12,7 @@
     @apply appearance-none;
   }
 }
+
+input[type="time"]:invalid {
+  @apply text-gray-400;
+}
