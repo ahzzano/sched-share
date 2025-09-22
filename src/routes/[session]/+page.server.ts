@@ -15,6 +15,10 @@ type Slot = {
     items: number[]
 }
 
+enum Day {
+    SUNDAY = 0, MONDAY = 1, TUESDAY = 2, WEDNESDAY = 3, THURSDAY = 4, FRIDAY = 5, SATURDAY = 6
+}
+
 export const actions = {
     addUser: async ({ request, params }) => {
         const form = await request.formData()
@@ -133,18 +137,17 @@ function generateSlots(items: ParsedItem[]): Date[] {
     return slots;
 }
 
-function assignSlots(items: ParsedItem[], slots: Date[]): Slot[] {
+function assignSlots(items: ParsedItem[], slots: Date[], day: Day): Slot[] {
     const toRet: Slot[] = []
     for (const slot of slots) {
-        const relevantItems = items.filter((item) => isInSlot(item, slot))
-        const ends = relevantItems.map((item) => ( {days: item.days, timeEnd: item.end} ) );
+        const relevantItems = items.filter((item) => isInSlot(item, slot) && item.days[day])
+        const ends = relevantItems.map((item) => ({ days: item.days, timeEnd: item.end }));
 
         toRet.push({
             start: slot,
             items: relevantItems.map((item) => item.id),
-            ends: ends
+            ends: ends,
         })
-
     }
     return toRet
 }
@@ -195,7 +198,7 @@ export const load: PageLoad = async ({ params }) => {
         group: group[0],
         users: mappedUsers,
         items: items,
-        slots: assignSlots(items, slots)
+        slots: slots,
     }
 }
 
