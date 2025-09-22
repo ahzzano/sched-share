@@ -29,12 +29,12 @@
                 <input type="text" name="itemName" placeholder="Studying..." />
             </div>
 
-            <div class="flex gap-2">
-                <div class="input">
+            <div class="flex flex-col md:flex-row w-full gap-2">
+                <div class="input w-full">
                     <span class="label">Start</span>
                     <input type="time" name="startTime" required />
                 </div>
-                <div class="input">
+                <div class="input w-full">
                     <span class="label">End</span>
                     <input type="time" name="endTime" required />
                 </div>

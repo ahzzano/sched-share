@@ -1,8 +1,9 @@
 <script lang="ts">
-    let selectedDays = [false, false, false, false, false, false, false];
+    let { selectedDays = [false, false, false, false, false, false, false] } =
+        $props();
 </script>
 
-<div class="w-full join flex">
+<div class="w-full md:join flex flex-wrap">
     {#each ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"] as day, i}
         <input
             type="hidden"
@@ -13,7 +14,7 @@
             class="join-item btn btn-sm flex-1 {selectedDays[i]
                 ? 'btn-primary btn-active'
                 : ''}"
-            on:click={() => (selectedDays[i] = !selectedDays[i])}
+            onclick={() => (selectedDays[i] = !selectedDays[i])}
             type="button"
         >
             {day}
