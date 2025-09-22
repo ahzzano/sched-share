@@ -8,7 +8,12 @@
     const users = $derived(data.users);
     const group = $derived(data.group);
     const slots = $derived(data.slots);
+    const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0))
     const groups = $derived(data.groups);
+
+    function findUser(id: number) {
+        return users.find((user) => user.id == id);
+    }
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
@@ -58,13 +63,18 @@
 </div>
 
 <div class="w-full py-16 px-32">
-    <div class="grid grid-cols-8">
+    <div class="grid grid-cols-8 gap-2">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
             <span>{day}</span>
         {/each}
-        {#each slots as slot}
-            <div class="col-1">
+        {#each  everyOtherSlot as slot, i}
+            <div class="col-1"
+            style="
+                grid-row-start: {i+2};
+                grid-row-end: {i+3};
+            "
+            >
                 {slot.getHours()}:{slot
                     .getMinutes()
                     .toString()
@@ -74,17 +84,20 @@
 
         {#each groups as group, col}
             {#each group as slot, i}
-                {#if slot.items.length > 0}
-                    <div
-                        class="bg-amber-100 p-2 rounded-2xl"
-                        style="
+                <div
+                    class="bg-amber-100 p-2 rounded-2xl"
+                    style="
                         grid-column: {col + 1};
                         grid-row-start: {slot.start}; 
                         grid-row-end: {i + 1 + slot.end};"
-                    >
-                        {slot.start} - {slot.end} {slot.items[0].name}
-                    </div>
-                {/if}
+                >
+                    {#each slot.items as item}
+                        <div>
+                            {findUser(item.user).name}
+                            {item.name}
+                        </div>
+                    {/each}
+                </div>
             {/each}
         {/each}
     </div>

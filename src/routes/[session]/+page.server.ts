@@ -159,15 +159,13 @@ function generateSubsets(slots: Date[], assignedSlots: ReturnType<typeof assignS
             const uniqueItems = items.filter(({ id }) => !ids.has(id) && ids.add(id));
 
             if (items.length != 0) {
+                console.log(left, right)
                 toRet.push({ start: left, end: right, items: uniqueItems })
-                console.log(items)
                 items = []
             }
             left = right
         }
     }
-    console.log(toRet)
-
     return toRet
 }
 
