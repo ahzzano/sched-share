@@ -1,23 +1,10 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
-    import AddItemForm from "$lib/components/AddItemForm.svelte";
-    import Daypicker from "$lib/components/Daypicker.svelte";
-    import ItemSection from "$lib/components/ItemSection.svelte";
-    import Modal from "$lib/components/Modal.svelte";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
-    const users = $derived(data.users);
     const group = $derived(data.group);
-
-    let editFormOpen = $state(false);
-    let currentItem = $state(null);
-
-    function onEdit(item) {
-        editFormOpen = true;
-        currentItem = item;
-    }
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16">
