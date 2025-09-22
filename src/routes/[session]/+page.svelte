@@ -63,19 +63,13 @@
 </div>
 
 <div class="w-full py-16 px-32">
-    <div class="grid grid-cols-8 gap-2">
+    <div class="grid grid-cols-8 gap-2 ">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
             <span>{day}</span>
         {/each}
     </div>
-    <div
-        class="grid grid-cols-8 gap-4"
-        style="
-        --rows:{slots.length}; --cols:7;
-
-    "
-    >
+    <div class="grid grid-cols-8 gap-1 grid-rows-30">
         {#each everyOtherSlot as slot, i}
             <div
                 class="col-1"
@@ -87,12 +81,6 @@
                     .getMinutes()
                     .toString()
                     .padStart(2, "0")}
-            </div>
-            <div style="
-                grid-row-start: {2 * i + 2};
-
-            ">
-
             </div>
         {/each}
 
@@ -107,7 +95,6 @@
                 >
                     {#each slot.items as item}
                         <div>
-                            {slots[slot.end].getMinutes()}
                             {findUser(item.user).name}
                             {item.name}
                         </div>
@@ -122,10 +109,24 @@
     .calendar-bg {
         background-image: linear-gradient(
                 to right,
+                theme(colors.gray.300) 1px,
+                transparent 1px
+            ),
+            linear-gradient(
+                to bottom,
+                theme(colors.gray.300) 1px,
+                transparent 1px
+            );
+        background-size: calc(100% / 7) calc(100% / 48);
+    }
+
+    .calendar-bg-flood {
+        background-image: linear-gradient(
+                to right,
                 #d1d5db 1px,
                 transparent 1px
             ),
             linear-gradient(to bottom, #d1d5db 1px, transparent 1px);
-        background-size: calc(100% / var(--cols)) calc(100% / var(--rows));
+        background-size: calc((100% - (6 * 0.5rem)) / 7) 2rem;
     }
 </style>
