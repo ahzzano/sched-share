@@ -6,14 +6,6 @@ import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
 
 type ParsedItem = Omit<typeof items.$inferSelect, "start" | "end"> & { days: boolean[]; start: Date; end: Date; }
-type Slot = {
-    start: Date,
-    ends: {
-        days: boolean[],
-        timeEnd: Date
-    }[]
-    items: number[]
-}
 
 enum Day {
     SUNDAY = 0, MONDAY = 1, TUESDAY = 2, WEDNESDAY = 3, THURSDAY = 4, FRIDAY = 5, SATURDAY = 6
@@ -118,7 +110,7 @@ function convertToDate(timeString: string) {
     return date
 }
 
-function isInSlot(item: Item, slotStart: Date): boolean {
+function isInSlot(item: ParsedItem, slotStart: Date): boolean {
     const slotEnd = new Date(slotStart.getTime() + 30 * 60 * 1000);
     return item.start < slotEnd && item.end > slotStart
 }
@@ -127,23 +119,25 @@ function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
     const base = new Date()
     base.setHours(5, 0, 0, 0)
-    for (let i = 0; i < 9 * 2; i++) {
+    for (let i = 0; i < 17 * 2 + 1; i++) {
         const time = new Date(base.getTime() + i * 30 * 60 * 1000);
         slots.push(time)
     }
     return slots;
 }
 
-function assignSlots(items: ParsedItem[], slots: Date[], day: Day): Slot[] {
-    const toRet: Slot[] = []
-    for (const slot of slots) {
+function assignSlots(items: ParsedItem[], slots: Date[], day: Day) {
+    const toRet = []
+    for (const [index, slot] of slots.entries()) {
         const relevantItems = items.filter((item) => isInSlot(item, slot) && item.days[day])
-        const ends = relevantItems.map((item) => ({ days: item.days, timeEnd: item.end }));
+        const ends = relevantItems.map((item) => (item.end));
+        ends.sort()
+        const maxEnd =  ends.at(-1) ?? null
 
         toRet.push({
             start: slot,
-            items: relevantItems.map((item) => item.id),
-            ends: ends,
+            items: relevantItems,
+            maxEnd: maxEnd
         })
     }
     return toRet
@@ -196,6 +190,7 @@ export const load: PageLoad = async ({ params }) => {
         users: mappedUsers,
         items: items,
         slots: slots,
+        mondaySlots: assignSlots(items, slots, Day.MONDAY)
     }
 }
 

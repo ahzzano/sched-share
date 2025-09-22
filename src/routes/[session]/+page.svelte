@@ -65,18 +65,17 @@
         {/each}
         {#each slots as slot}
             <div class="col-1">
-                {slot.getHours()}:{slot.getMinutes().toString().padStart(2, "0")}
+                {slot.getHours()}:{slot
+                    .getMinutes()
+                    .toString()
+                    .padStart(2, "0")}
             </div>
         {/each}
 
-        {#each allItems as item}
-            {#each [0, 1, 2, 3, 4, 5, 6] as i}
-                {#if item.days[i]}
-                    <div class="col-{i + 2}">
-                        {item.name}
-                    </div>
-                {/if}
-            {/each}
+        {#each data.mondaySlots as slot, i}
+            {#if slot.items.length > 0}
+                <div class="col-3" style="grid-row-start: {i+1};">{slot.items[0].name}</div>
+            {/if}
         {/each}
     </div>
 </div>
