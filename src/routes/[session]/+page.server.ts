@@ -99,30 +99,11 @@ export const actions = {
 
 } satisfies Actions
 
-function convertToPM(timeString: string | null) {
-    if (timeString === null) {
-        return null
-    }
-
-    let [hour, minutes] = timeString.split(":")
-    let hourNumber = parseInt(hour)
-    let minNumber = parseInt(minutes)
-    let AM = 'AM'
-
-    if (hourNumber == 0) {
-        AM = 'AM'
-        hourNumber = 12
-    } else if (hourNumber == 12) {
-        AM = 'PM'
-    } else if (hourNumber > 12) {
-        AM = 'PM'
-        hourNumber = hourNumber - 12
-    }
-
-    const hours = hourNumber.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-    const minute = minNumber.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
-
-    return `${hours}:${minute} ${AM}`
+function convertToDate(timeString: string) {
+    let [hours, minutes] = timeString.split(":").map(Number)
+    const date = new Date()
+    date.setHours(hours, minutes, 0, 0)
+    return date
 }
 
 export const load: PageLoad = async ({ params }) => {
@@ -149,15 +130,25 @@ export const load: PageLoad = async ({ params }) => {
         ...row,
         items: row.items.map((item) => ({
             ...item,
-            start: new Date(item.start),
-            end: new Date(item.end),
-        }))
+            start: convertToDate(item.start),
+            end: convertToDate(item.end),
+            days: [
+                item.sunday,
+                item.monday,
+                item.tuesday,
+                item.wednesday,
+                item.thursday,
+                item.friday,
+                item.saturday
+            ]
+        })),
     }))
 
     return {
         session: params.session,
         group: group[0],
-        users: mappedUsers
+        users: mappedUsers,
+        items: mappedUsers.map((user) => user.items).flat()
     }
 }
 

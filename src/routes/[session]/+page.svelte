@@ -7,7 +7,7 @@
     let { data }: PageProps = $props();
     const users = $derived(data.users);
     const group = $derived(data.group);
-    const allItems = $derived(data.users.map((user) => user.items).flat());
+    const allItems = $derived(data.items);
 </script>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
@@ -56,15 +56,24 @@
     </div>
 </div>
 
-<div class="grid grid-cols-8 w-full p-32">
-    <span>Time Slot</span>
-    {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
-        <span>{day}</span>
-    {/each}
+<div class="w-full p-32">
+    <div class="grid grid-cols-8">
+        <span>Time Slot</span>
+        {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
+            <span>{day}</span>
+        {/each}
 
-    {#each allItems as item}
-        <div>
-            {item.start} - {item.end}
-        </div>
-    {/each}
+        {#each allItems as item}
+            <div class="col-1">
+                {item.start.getHours()} - {item.end.getHours()}
+            </div>
+            {#each [0, 1, 2, 3, 4, 5, 6] as i}
+                {#if item.days[i]}
+                    <div class="col-{i + 2}">
+                        {item.name}
+                    </div>
+                {/if}
+            {/each}
+        {/each}
+    </div>
 </div>
