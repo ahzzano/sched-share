@@ -2,6 +2,7 @@
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
+    import Daypicker from "$lib/components/Daypicker.svelte";
     import ItemSection from "$lib/components/ItemSection.svelte";
     import Modal from "$lib/components/Modal.svelte";
     import type { PageProps } from "./$types";
@@ -19,10 +20,10 @@
     }
 </script>
 
-<Modal hasPrompt={false} prompt="" title={"Edit Item"} bind:open={editFormOpen}>
+<Modal hasPrompt={false} prompt="" title="Delete Item" bind:open={editFormOpen}>
     <form
-        class="w-1/4"
-        action="?/deleteSchedule"
+        class="w-full flex flex-col"
+        action="?/updateItem"
         method="POST"
         use:enhance={() => {
             return async ({ update }) => {
@@ -32,59 +33,60 @@
             };
         }}
     >
-        {#if currentItem}
+        {#if currentItem != null}
             <input type="hidden" name="id" value={currentItem.id} />
-            <button class="btn btn-ghost btn-sm btn-error">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    class="h-4 w-4"
-                    ><path
-                        d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zm72 200l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-176 0c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
-                    /></svg
+            <p>Are you sure you want to delete this item?</p>
+            <div class="flex card-actions justify-end">
+                <button
+                    class="btn btn-ghost btn-sm btn-error"
+                    formaction="?/deleteSchedule"
                 >
-            </button>
+                    Delete
+                </button>
+            </div>
         {/if}
     </form>
 </Modal>
 
-<div
-    class="flex flex-col md:flex-row gap-2 w-full items-center justify-start md:p-12 p-8"
->
-    <div class="flex flex-col text-center md:text-left">
-        {#if group.name}
-            <span class="text-2xl">{group.name}</span>
-        {:else}
-            <span class="text-2xl">No Group Name</span>
-        {/if}
+<div class="w-full flex items-center justify-center mt-8 md:mt-16">
+    <div class="card shadow-sm rounded-2xl">
+        <div class="card-body">
+            <div class="flex flex-col text-left">
+                {#if group.name}
+                    <span class="text-2xl card-title">{group.name}</span>
+                {:else}
+                    <span class="text-2xl card-title">No Group Name</span>
+                {/if}
 
-        <span> Add someone's schedule here </span>
-    </div>
+                <span> Add someone's schedule here </span>
+            </div>
 
-    <form
-        method="POST"
-        action="?/addUser"
-        class="md:ml-auto w-full md:w-128"
-        use:enhance={() => {
-            return async ({ update, result }) => {
-                invalidateAll();
-                await update();
-            };
-        }}
-    >
-        <div class="join w-full">
-            <input
-                name="username"
-                placeholder="Username: Don Pedro"
-                class="input"
-            />
-            <button class="btn">Add User</button>
+            <form
+                method="POST"
+                action="?/addUser"
+                class="w-full md:w-128"
+                use:enhance={() => {
+                    return async ({ update, result }) => {
+                        invalidateAll();
+                        await update();
+                    };
+                }}
+            >
+                <div class="join w-full">
+                    <input
+                        name="username"
+                        placeholder="Username: Don Pedro"
+                        class="input w-full"
+                    />
+                    <button class="btn">Add User</button>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 
 <div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start p-8 md:p- gap-4"
+    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start p-8 md:p-16 md:px-32 gap-4"
 >
     {#each users as user}
         <div class="card bg-base-100 shadow-sm w-full">
@@ -124,10 +126,12 @@
                         <ItemSection
                             items={user.items.filter((item) => item.sunday)}
                             title="Sunday"
+                            editCallback={onEdit}
                         />
                         <ItemSection
                             items={user.items.filter((item) => item.monday)}
                             title="Monday"
+                            editCallback={onEdit}
                         />
                         <ItemSection
                             items={user.items.filter((item) => item.tuesday)}
@@ -137,18 +141,22 @@
                         <ItemSection
                             items={user.items.filter((item) => item.wednesday)}
                             title="Wednesday"
+                            editCallback={onEdit}
                         />
                         <ItemSection
                             items={user.items.filter((item) => item.thursday)}
                             title="Thursday"
+                            editCallback={onEdit}
                         />
                         <ItemSection
                             items={user.items.filter((item) => item.friday)}
                             title="Friday"
+                            editCallback={onEdit}
                         />
                         <ItemSection
                             items={user.items.filter((item) => item.saturday)}
                             title="Saturday"
+                            editCallback={onEdit}
                         />
                     </div>
                 {/if}

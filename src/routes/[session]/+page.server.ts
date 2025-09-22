@@ -85,6 +85,16 @@ export const actions = {
 
         await db.delete(items).where(eq(items.user, parseInt(id.toString())))
         await db.delete(users).where(eq(users.id, parseInt(id.toString())))
+    },
+    updateSchedule: async ({ request }) => {
+        const form = await request.formData()
+        const newData = {
+            name: form.get('name'),
+            id: form.get('id')
+        }
+        if (!newData.id) {
+            return fail(404)
+        }
     }
 
 } satisfies Actions
