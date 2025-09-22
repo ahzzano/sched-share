@@ -2,7 +2,7 @@
     let {
         children,
         hasPrompt = true,
-        prompt,
+        prompt = "",
         title,
         open = $bindable(true),
     } = $props();

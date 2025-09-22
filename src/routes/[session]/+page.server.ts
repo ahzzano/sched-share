@@ -5,6 +5,7 @@ import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
 import { request } from "http"
+import { parse } from "path"
 
 export const actions = {
     addUser: async ({ request, params }) => {
@@ -75,7 +76,7 @@ export const actions = {
 
         await db.delete(items).where(eq(items.id, parseInt(id.toString())))
     },
-    deleteUser: async({request}) => {
+    deleteUser: async ({ request }) => {
         const form = await request.formData()
         const id = form.get('id')
         if (!id) {
@@ -87,6 +88,32 @@ export const actions = {
     }
 
 } satisfies Actions
+
+function convertToPM(timeString: string | null) {
+    if (timeString === null) {
+        return null
+    }
+
+    let [hour, minutes] = timeString.split(":")
+    let hourNumber = parseInt(hour)
+    let minNumber = parseInt(minutes)
+    let AM = 'AM'
+
+    if (hourNumber == 0) {
+        AM = 'AM'
+        hourNumber = 12
+    } else if (hourNumber == 12) {
+        AM = 'PM'
+    } else if (hourNumber > 12) {
+        AM = 'PM'
+        hourNumber = hourNumber - 12
+    }
+
+    const hours = hourNumber.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+    const minute = minNumber.toLocaleString('en-US', { minimumIntegerDigits: 2, useGrouping: false })
+
+    return `${hours}:${minute} ${AM}`
+}
 
 export const load: PageLoad = async ({ params }) => {
     const sessId = parseInt(params.session)
@@ -108,10 +135,19 @@ export const load: PageLoad = async ({ params }) => {
         where: eq(users.group, sessId)
     })
 
+    const mappedUsers = groupUsers.map(row => ({
+        ...row,
+        items: row.items.map((item) => ({
+            ...item,
+            start: convertToPM(item.start),
+            end: convertToPM(item.end),
+        }))
+    }))
+
     return {
         session: params.session,
         group: group[0],
-        users: groupUsers
+        users: mappedUsers
     }
 }
 
