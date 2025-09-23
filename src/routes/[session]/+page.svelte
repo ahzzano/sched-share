@@ -10,7 +10,8 @@
     const slots = $derived(data.slots);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
-    console.log(groups);
+
+    let openGroupModal = $state(false);
 
     function findUser(id: number) {
         return users.find((user) => user.id == id);
@@ -36,9 +37,12 @@
 
     <div class="card shadow-sm rounded-2xl">
         <div class="card-body">
-            {#each users as user}
-                <span>{user.name}</span>
-            {/each}
+            <span class="card-title">Add Items</span>
+            <div class="flex gap-2">
+                {#each users as user}
+                    <span>{user.name}</span>
+                {/each}
+            </div>
             <form
                 method="POST"
                 action="?/addUser"
@@ -62,8 +66,7 @@
         </div>
     </div>
 </div>
-
-<div class="w-full py-16 px-32">
+<div class="w-full py-32 px-48">
     <div class="grid grid-cols-8 gap-2 mb-4">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
@@ -90,17 +93,19 @@
         {#each groups as group, col}
             {#each group as slot}
                 <div
+                    role="button"
+                    tabindex="0"
                     class="bg-green-100 rounded-2xl"
                     style="
                         grid-column: {col + 2};
                         grid-row-start: {slot.start + 1}; 
                         grid-row-end: {slot.end + 2};"
+                    onkeypress={() => {}}
                 >
                     <div class="p-4">
                         {#each slot.items as item}
                             <div>
                                 {findUser(item.user).name}
-                                {item.name}
                             </div>
                         {/each}
                     </div>
@@ -118,6 +123,5 @@
             #e5e7eb 0px 1px,
             transparent 1px 1.5em
         );
-        pointer-events: none;
     }
 </style>

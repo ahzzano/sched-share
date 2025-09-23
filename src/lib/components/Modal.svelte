@@ -1,10 +1,9 @@
 <script lang="ts">
     let {
         children,
-        hasPrompt = true,
         prompt = "",
         title,
-        open = $bindable(true),
+        open = $bindable(false),
     } = $props();
 
     let isOpen = $derived(open);
@@ -13,7 +12,7 @@
     }
 </script>
 
-{#if hasPrompt}
+{#if prompt.length > 0}
     <button class="btn" onclick={toggle}>
         {prompt}
     </button>

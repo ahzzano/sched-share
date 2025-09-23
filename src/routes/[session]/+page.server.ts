@@ -4,9 +4,8 @@ import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
-import type { ParseInput } from "zod/v3"
+import { type ParsedItem } from "$lib/types"
 
-type ParsedItem = Omit<typeof items.$inferSelect, "start" | "end"> & { days: boolean[]; start: Date; end: Date; }
 
 enum Day {
     SUNDAY = 0, MONDAY = 1, TUESDAY = 2, WEDNESDAY = 3, THURSDAY = 4, FRIDAY = 5, SATURDAY = 6
