@@ -44,8 +44,28 @@
                 <div class="collapse-title font-semibold">{user.name}</div>
                 <div class="collapse-content">
                     {#each openItems.filter((item) => item.user == user.id) as item}
-                        <div class="w-full flex">
-                            <span class="w-1/2">{item.name}</span>
+                        <div class="w-full flex items-center">
+                            <div
+                                class="w-1/2 flex gap-3 justify-start items-center"
+                            >
+                                <span>{item.name}</span>
+                                <form action="?/deleteSchedule" method="POST">
+                                    <input value={item.id} name="id" hidden />
+                                    <button
+                                        class="w-10 hover:bg-red-200 p-2 rounded"
+                                        aria-label="delete-item"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 640 512"
+                                            class="w-6"
+                                            ><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path
+                                                d="M136.4 128a120 120 0 1 1 240 0 120 120 0 1 1 -240 0zm-88 354.3c0-98.5 79.8-178.3 178.3-178.3l59.4 0c98.5 0 178.3 79.8 178.3 178.3 0 16.4-13.3 29.7-29.7 29.7L78.1 512c-16.4 0-29.7-13.3-29.7-29.7zM612.3 124.1c9.4 9.4 9.4 24.6 0 33.9l-33.9 33.9 33.9 33.9c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-33.9-33.9-33.9 33.9c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l33.9-33.9-33.9-33.9c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l33.9 33.9 33.9-33.9c9.4-9.4 24.6-9.4 33.9 0z"
+                                            /></svg
+                                        >
+                                    </button>
+                                </form>
+                            </div>
                             <div class="w-1/2 flex gap-3 justify-end">
                                 <span
                                     >{item.start.getHours()}:{item.start
@@ -62,11 +82,6 @@
                                 </span>
                             </div>
                         </div>
-
-                        <form action="?/deleteSchedule" method="POST">
-                        <input value={item.id} name="id" hidden />
-                            <button>Delete</button>
-                        </form>
                     {/each}
                 </div>
             </div>
