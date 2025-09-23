@@ -35,14 +35,16 @@
 
     function uniqueUsers(items: ParsedItem[]) {
         const users = items.map((item) => item.user);
-        const uniqueUsers = new Set(users)
-        const usersList = Array.from(uniqueUsers)
+        const uniqueUsers = new Set(users);
+        const usersList = Array.from(uniqueUsers);
 
-        return usersList.map(i => findUser(i)).filter(i => i != null || i != undefined)
+        return usersList
+            .map((i) => findUser(i))
+            .filter((i) => i != null || i != undefined);
     }
 </script>
 
-<Modal title="Schedules" bind:open={openGroupModal}>
+<Modal title="Colliding Schedules" bind:open={openGroupModal}>
     <div class="flex gap-2 flex-col">
         {#each openUsers as user}
             <div
@@ -56,8 +58,18 @@
                             <div
                                 class="w-1/2 flex gap-3 justify-start items-center"
                             >
-                                <span>{item.name}</span>
-                                <form action="?/deleteSchedule" method="POST">
+                                <span class="w-2/3">{item.name}</span>
+                                <form
+                                    action="?/deleteSchedule"
+                                    method="POST"
+                                    use:enhance={() => {
+                                        return async ({ update }) => {
+                                            await update();
+                                            invalidateAll();
+                                            openGroupModal = false
+                                        };
+                                    }}
+                                >
                                     <input value={item.id} name="id" hidden />
                                     <button
                                         class="w-10 hover:bg-red-200 p-2 rounded"
@@ -74,19 +86,21 @@
                                     </button>
                                 </form>
                             </div>
-                            <div class="w-1/2 flex gap-3 justify-end">
-                                <span
-                                    >{item.start.getHours()}:{item.start
-                                        .getMinutes()
-                                        .toString()
-                                        .padStart(2, "0")}
+                            <div class="w-1/2 flex gap-1 justify-end">
+                                <span>
+                                    {item.start.toLocaleString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    })}
                                 </span>
                                 <span> - </span>
-                                <span
-                                    >{item.end.getHours()}:{item.end
-                                        .getMinutes()
-                                        .toString()
-                                        .padStart(2, "0")}
+                                <span>
+                                    {item.end.toLocaleString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    })}
                                 </span>
                             </div>
                         </div>
@@ -167,15 +181,20 @@
     >
         {#each everyOtherSlot as slot, i}
             <div
-                class="col-1 row-span-2 w-full h-full"
+                class="col-1 row-span-2 w-full h-full text-gray-500"
                 style="
                 grid-row-start: {2 * i + 1};
             "
             >
-                {slot.getHours()}:{slot
-                    .getMinutes()
-                    .toString()
-                    .padStart(2, "0")}
+                <!-- {slot.getHours()}:{slot -->
+                <!--     .getMinutes() -->
+                <!--     .toString() -->
+                <!--     .padStart(2, "0")} -->
+                {slot.toLocaleString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                })}
             </div>
         {/each}
 
