@@ -2,6 +2,8 @@
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
+    import Modal from "$lib/components/Modal.svelte";
+    import type { ParsedItem } from "$lib/types";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
@@ -13,10 +15,74 @@
 
     let openGroupModal = $state(false);
 
+    let openItems: ParsedItem[] = $state([]);
+    const openUsers = $derived.by(() => {
+        let toRet = [];
+        for (const item of openItems) {
+            let userId = item.user;
+            let user = findUser(userId);
+            if (user) {
+                toRet.push(user);
+            }
+        }
+
+        return toRet;
+    });
+
     function findUser(id: number) {
         return users.find((user) => user.id == id);
     }
 </script>
+
+<Modal title="Schedules" bind:open={openGroupModal}>
+    <div class="flex gap-2 flex-col">
+        {#each openUsers as user}
+            <div
+                class="collapse collapse-arrow bg-base-100 border border-base-300"
+            >
+                <input type="checkbox" name="accordion" checked={false} />
+                <div class="collapse-title font-semibold">{user.name}</div>
+                <div class="collapse-content">
+                    {#each openItems.filter((item) => item.user == user.id) as item}
+                        <div class="w-full flex">
+                            <span class="w-1/2">{item.name}</span>
+                            <div class="w-1/2 flex gap-3 justify-end">
+                                <span
+                                    >{item.start.getHours()}:{item.start
+                                        .getMinutes()
+                                        .toString()
+                                        .padStart(2, "0")}
+                                </span>
+                                <span> - </span>
+                                <span
+                                    >{item.end.getHours()}:{item.end
+                                        .getMinutes()
+                                        .toString()
+                                        .padStart(2, "0")}
+                                </span>
+                            </div>
+                        </div>
+
+                        <form action="?/deleteSchedule" method="POST">
+                        <input value={item.id} name="id" hidden />
+                            <button>Delete</button>
+                        </form>
+                    {/each}
+                </div>
+            </div>
+        {/each}
+        <div class="card-actions justify-end">
+            <button
+                class="btn btn-primary"
+                onclick={() => {
+                    openGroupModal = false;
+                }}
+            >
+                Close
+            </button>
+        </div>
+    </div>
+</Modal>
 
 <div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
     <div class="card shadow-sm rounded-2xl">
@@ -101,6 +167,10 @@
                         grid-row-start: {slot.start + 1}; 
                         grid-row-end: {slot.end + 2};"
                     onkeypress={() => {}}
+                    onclick={() => {
+                        openGroupModal = true;
+                        openItems = slot.items;
+                    }}
                 >
                     <div class="p-4">
                         {#each slot.items as item}
