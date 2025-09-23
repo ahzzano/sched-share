@@ -32,6 +32,14 @@
     function findUser(id: number) {
         return users.find((user) => user.id == id);
     }
+
+    function uniqueUsers(items: ParsedItem[]) {
+        const users = items.map((item) => item.user);
+        const uniqueUsers = new Set(users)
+        const usersList = Array.from(uniqueUsers)
+
+        return usersList.map(i => findUser(i)).filter(i => i != null || i != undefined)
+    }
 </script>
 
 <Modal title="Schedules" bind:open={openGroupModal}>
@@ -176,7 +184,7 @@
                 <div
                     role="button"
                     tabindex="0"
-                    class="bg-green-100 hover:bg-green-200 rounded-2xl"
+                    class="bg-green-100 hover:bg-green-200 rounded-2xl my-2"
                     style="
                         grid-column: {col + 2};
                         grid-row-start: {slot.start + 1}; 
@@ -188,9 +196,9 @@
                     }}
                 >
                     <div class="p-4">
-                        {#each slot.items as item}
+                        {#each uniqueUsers(slot.items) as user}
                             <div>
-                                {findUser(item.user).name}
+                                {user.name}
                             </div>
                         {/each}
                     </div>
