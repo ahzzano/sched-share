@@ -4,6 +4,7 @@
     import { invalidateAll } from "$app/navigation";
     import Modal from "./Modal.svelte";
     let { users } = $props();
+    let days = $state([false, false, false, false, false, false, false]);
 
     let open = $state(false);
 </script>
@@ -16,6 +17,7 @@
         return async ({ update }) => {
             invalidateAll();
             await update();
+            days =  [false, false, false, false, false, false, false]
         };
     }}
     class="flex flex-col gap-2"
@@ -47,7 +49,7 @@
         </div>
     </div>
 
-    <Daypicker />
+    <Daypicker bind:selectedDays={days}/>
 
     <button class="btn w-full"> Add </button>
 </form>

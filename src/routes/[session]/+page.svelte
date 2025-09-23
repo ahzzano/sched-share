@@ -30,10 +30,19 @@
                 <span> Add someone's schedule here </span>
             </div>
 
+            <AddItemForm {users} />
+        </div>
+    </div>
+
+    <div class="card shadow-sm rounded-2xl">
+        <div class="card-body">
+            {#each users as user}
+                <span>{user.name}</span>
+            {/each}
             <form
                 method="POST"
                 action="?/addUser"
-                class="w-full md:w-128"
+                class="w-full"
                 use:enhance={() => {
                     return async ({ update, result }) => {
                         invalidateAll();
@@ -50,15 +59,6 @@
                     <button class="btn">Add User</button>
                 </div>
             </form>
-            <AddItemForm {users} />
-        </div>
-    </div>
-
-    <div class="card shadow-sm rounded-2xl">
-        <div class="card-body">
-            {#each users as user}
-                <span>{user.name}</span>
-            {/each}
         </div>
     </div>
 </div>
@@ -90,13 +90,13 @@
         {#each groups as group, col}
             {#each group as slot}
                 <div
-                    class="bg-green-100 rounded"
+                    class="bg-green-100 rounded-2xl"
                     style="
                         grid-column: {col + 2};
                         grid-row-start: {slot.start + 1}; 
                         grid-row-end: {slot.end + 2};"
                 >
-                    <div class="p-2">
+                    <div class="p-4">
                         {#each slot.items as item}
                             <div>
                                 {findUser(item.user).name}
