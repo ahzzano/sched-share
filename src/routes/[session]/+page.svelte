@@ -63,16 +63,18 @@
 </div>
 
 <div class="w-full py-16 px-32">
-    <div class="grid grid-cols-8 gap-2 ">
+    <div class="grid grid-cols-8 gap-2">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
             <span>{day}</span>
         {/each}
     </div>
-    <div class="grid grid-cols-8 gap-1 grid-rows-30">
+    <div
+        class="grid grid-cols-8 gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
+    >
         {#each everyOtherSlot as slot, i}
             <div
-                class="col-1"
+                class="col-1 row-span-2 w-full h-full"
                 style="
                 grid-row-start: {2 * i + 1};
             "
@@ -87,18 +89,20 @@
         {#each groups as group, col}
             {#each group as slot, i}
                 <div
-                    class="bg-green-100 p-2 rounded"
+                    class="bg-green-100 rounded"
                     style="
                         grid-column: {col + 1};
                         grid-row-start: {slot.start + 1}; 
                         grid-row-end: {slot.end + 2};"
                 >
-                    {#each slot.items as item}
-                        <div>
-                            {findUser(item.user).name}
-                            {item.name}
-                        </div>
-                    {/each}
+                    <div class="p-2">
+                        {#each slot.items as item}
+                            <div>
+                                {findUser(item.user).name}
+                                {item.name}
+                            </div>
+                        {/each}
+                    </div>
                 </div>
             {/each}
         {/each}
@@ -106,27 +110,13 @@
 </div>
 
 <style>
-    .calendar-bg {
-        background-image: linear-gradient(
-                to right,
-                theme(colors.gray.300) 1px,
-                transparent 1px
-            ),
-            linear-gradient(
-                to bottom,
-                theme(colors.gray.300) 1px,
-                transparent 1px
-            );
-        background-size: calc(100% / 7) calc(100% / 48);
-    }
-
-    .calendar-bg-flood {
-        background-image: linear-gradient(
-                to right,
-                #d1d5db 1px,
-                transparent 1px
-            ),
-            linear-gradient(to bottom, #d1d5db 1px, transparent 1px);
-        background-size: calc((100% - (6 * 0.5rem)) / 7) 2rem;
+    .bg-calendar-lines {
+        z-index: 0;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            #e5e7eb 0px 1px,
+            transparent 1px 1.5em
+        );
+        pointer-events: none;
     }
 </style>
