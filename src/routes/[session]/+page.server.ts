@@ -67,7 +67,10 @@ export const actions = {
             return fail(404)
         }
 
-        console.log(result.data)
+        if (convertToDate(result.data.start) > convertToDate(result.data.end)) {
+            return fail(404)
+        }
+
         await db.insert(items).values(result.data)
 
         return { success: true }

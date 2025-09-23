@@ -63,10 +63,10 @@
 </div>
 
 <div class="w-full py-16 px-32">
-    <div class="grid grid-cols-8 gap-2">
+    <div class="grid grid-cols-8 gap-2 mb-4">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
-            <span>{day}</span>
+            <span class="text-center">{day}</span>
         {/each}
     </div>
     <div
