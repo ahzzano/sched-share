@@ -10,6 +10,7 @@
     const slots = $derived(data.slots);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
+    console.log(groups);
 
     function findUser(id: number) {
         return users.find((user) => user.id == id);
@@ -49,6 +50,7 @@
                     <button class="btn">Add User</button>
                 </div>
             </form>
+            <AddItemForm {users} />
         </div>
     </div>
 
@@ -56,7 +58,6 @@
         <div class="card-body">
             {#each users as user}
                 <span>{user.name}</span>
-                <AddItemForm {user} />
             {/each}
         </div>
     </div>
@@ -87,11 +88,11 @@
         {/each}
 
         {#each groups as group, col}
-            {#each group as slot, i}
+            {#each group as slot}
                 <div
                     class="bg-green-100 rounded"
                     style="
-                        grid-column: {col + 1};
+                        grid-column: {col + 2};
                         grid-row-start: {slot.start + 1}; 
                         grid-row-end: {slot.end + 2};"
                 >
