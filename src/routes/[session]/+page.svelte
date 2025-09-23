@@ -176,7 +176,7 @@
                 <div
                     role="button"
                     tabindex="0"
-                    class="bg-green-100 rounded-2xl"
+                    class="bg-green-100 hover:bg-green-200 rounded-2xl"
                     style="
                         grid-column: {col + 2};
                         grid-row-start: {slot.start + 1}; 
