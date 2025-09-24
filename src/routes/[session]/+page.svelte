@@ -21,9 +21,13 @@
         for (const item of openItems) {
             let userId = item.user;
             let user = findUser(userId);
-            if (user) {
-                toRet.push(user);
+            if (!user) {
+                continue;
             }
+            if (toRet.filter((ret) => ret.id == userId).length > 0) {
+                continue;
+            }
+            toRet.push(user);
         }
 
         return toRet;
@@ -64,9 +68,9 @@
                                     method="POST"
                                     use:enhance={() => {
                                         return async ({ update }) => {
+                                            openGroupModal = false;
                                             await update();
                                             invalidateAll();
-                                            openGroupModal = false
                                         };
                                     }}
                                 >
@@ -121,7 +125,9 @@
     </div>
 </Modal>
 
-<div class="w-full flex flex-col md:flex-row items-center md:justify-center mt-8 md:mt-16 gap-4">
+<div
+    class="w-full flex flex-col md:flex-row items-center md:justify-center mt-8 md:mt-16 gap-4"
+>
     <div class="card shadow-sm rounded-2xl">
         <div class="card-body">
             <div class="flex flex-col text-left">
