@@ -3,7 +3,8 @@
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
     import Modal from "$lib/components/Modal.svelte";
-    import type { ParsedItem } from "$lib/types";
+    import { type ParsedItem } from "$lib/types";
+    import { SELECTED_DAYS } from "../../types";
     import type { PageProps } from "./$types";
 
     let { data }: PageProps = $props();
@@ -14,6 +15,8 @@
     const groups = $derived(data.groups);
 
     let openGroupModal = $state(false);
+
+    let selectedDays = $state(SELECTED_DAYS.ALL);
 
     let openItems: ParsedItem[] = $state([]);
     const openUsers = $derived.by(() => {
@@ -201,30 +204,32 @@
         {/each}
 
         {#each groups as group, col}
-            {#each group as slot}
-                <div
-                    role="button"
-                    tabindex="0"
-                    class="bg-green-100 hover:bg-green-200 rounded-2xl my-2"
-                    style="
-                        grid-column: {col + 2};
-                        grid-row-start: {slot.start + 1}; 
-                        grid-row-end: {slot.end + 2};"
-                    onkeypress={() => {}}
-                    onclick={() => {
-                        openGroupModal = true;
-                        openItems = slot.items;
-                    }}
-                >
-                    <div class="p-4">
-                        {#each uniqueUsers(slot.items) as user}
-                            <div>
-                                {user.name}
-                            </div>
-                        {/each}
+            {#if selectedDays == SELECTED_DAYS.ALL || selectedDays == col}
+                {#each group as slot}
+                    <div
+                        role="button"
+                        tabindex="0"
+                        class="bg-green-100 hover:bg-green-200 rounded-2xl my-2"
+                        style="
+                            grid-column: {col + 2};
+                            grid-row-start: {slot.start + 1}; 
+                            grid-row-end: {slot.end + 2};"
+                        onkeypress={() => {}}
+                        onclick={() => {
+                            openGroupModal = true;
+                            openItems = slot.items;
+                        }}
+                    >
+                        <div class="p-4">
+                            {#each uniqueUsers(slot.items) as user}
+                                <div>
+                                    {user.name}
+                                </div>
+                            {/each}
+                        </div>
                     </div>
-                </div>
-            {/each}
+                {/each}
+            {/if}
         {/each}
     </div>
 </div>
