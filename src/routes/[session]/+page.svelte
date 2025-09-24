@@ -183,7 +183,7 @@
         {/each}
     </div>
     <div
-        class="grid grid-cols-8 gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
+        class="grid grid-cols-2 md:grid-cols-8 gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
     >
         {#each everyOtherSlot as slot, i}
             <div
