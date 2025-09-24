@@ -121,7 +121,7 @@
     </div>
 </Modal>
 
-<div class="w-full flex items-center justify-center mt-8 md:mt-16 gap-4">
+<div class="w-full flex flex-col md:flex-row items-center md:justify-center mt-8 md:mt-16 gap-4">
     <div class="card shadow-sm rounded-2xl">
         <div class="card-body">
             <div class="flex flex-col text-left">
@@ -169,7 +169,7 @@
         </div>
     </div>
 </div>
-<div class="w-full py-32 px-48">
+<div class="w-full md:py-32 py-8 px-8 md:px-48">
     <div class="grid grid-cols-8 gap-2 mb-4">
         <span>Time Slot</span>
         {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
@@ -186,10 +186,6 @@
                 grid-row-start: {2 * i + 1};
             "
             >
-                <!-- {slot.getHours()}:{slot -->
-                <!--     .getMinutes() -->
-                <!--     .toString() -->
-                <!--     .padStart(2, "0")} -->
                 {slot.toLocaleString([], {
                     hour: "2-digit",
                     minute: "2-digit",
