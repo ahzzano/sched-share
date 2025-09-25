@@ -4,7 +4,8 @@
         prompt = "",
         title,
         open = $bindable(false),
-        _class = ""
+        modalClass = "",
+        modalContentClass = ""
     } = $props();
 
     let isOpen = $derived(open);

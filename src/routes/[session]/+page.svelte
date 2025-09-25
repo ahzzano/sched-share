@@ -60,7 +60,7 @@
     }
 </script>
 
-<Modal title="Colliding Schedules" bind:open={openGroupModal}>
+<Modal title="Colliding Schedules" bind:open={openGroupModal} modalContentClass="">
     <div class="flex gap-2 flex-col">
         {#each openUsers as user}
             <div
