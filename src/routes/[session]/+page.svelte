@@ -16,7 +16,16 @@
 
     let openGroupModal = $state(false);
 
-    let selectedDays = $state(SELECTED_DAYS.ALL);
+    let selectedDays = $state(SELECTED_DAYS.);
+    const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+    ];
 
     let openItems: ParsedItem[] = $state([]);
     const openUsers = $derived.by(() => {
@@ -179,11 +188,15 @@
     </div>
 </div>
 <div class="w-full md:py-32 py-8 px-8 md:px-48">
-    <div class="grid grid-cols-8 gap-2 mb-4">
+    <div class="grid grid-cols-2 md:grid-cols-8 gap-2 mb-4">
         <span>Time Slot</span>
-        {#each ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as day}
-            <span class="text-center">{day}</span>
-        {/each}
+        {#if selectedDays != SELECTED_DAYS.ALL}
+            {days[selectedDays]}
+        {:else}
+            {#each days as day}
+                <span class="text-center">{day}</span>
+            {/each}
+        {/if}
     </div>
     <div
         class="grid grid-cols-2 md:grid-cols-8 gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
