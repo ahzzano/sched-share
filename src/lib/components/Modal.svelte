@@ -4,6 +4,7 @@
         prompt = "",
         title,
         open = $bindable(false),
+        _class = ""
     } = $props();
 
     let isOpen = $derived(open);
@@ -19,7 +20,7 @@
 {/if}
 
 {#if isOpen}
-    <div class="modal modal-open">
+    <div class="modal modal-open {_class}">
         <div class="modal-box">
             <button
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
