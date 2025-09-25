@@ -16,7 +16,7 @@
 
     let openGroupModal = $state(false);
 
-    let selectedDays = $state(SELECTED_DAYS.);
+    let selectedDays = $state(SELECTED_DAYS.ALL);
     const days = [
         "Sunday",
         "Monday",
