@@ -21,8 +21,8 @@
 {/if}
 
 {#if isOpen}
-    <div class="modal modal-open {_class}">
-        <div class="modal-box">
+    <div class="modal modal-open {modalClass}">
+        <div class="modal-box {modalContentClass}">
             <button
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onclick={toggle}>✕</button
