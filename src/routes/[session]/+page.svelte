@@ -179,7 +179,7 @@
 
     <div class="card shadow-sm rounded-2xl">
         <div class="card-body">
-            <span class="card-title">Add Items</span>
+            <span class="card-title">Add Users</span>
             <div class="flex gap-2">
                 {#each users as user}
                     <span>{user.name}</span>
@@ -205,10 +205,20 @@
                     <button class="btn">Add User</button>
                 </div>
             </form>
+            <Modal title="Delete Users" prompt="Delete User">
+                <div class="flex flex-col">
+                    {#each users as user}
+                        <span>
+                            {user.name}
+                        </span>
+                    {/each}
+                </div>
+            </Modal>
         </div>
     </div>
 </div>
-<div class="w-full md:py-32 py-8 px-8 md:px-48">
+
+<div class="w-full md:py-32 py-8 px-8 md:px-48 flex flex-col">
     <div class="grid grid-cols-[80px_1fr] md:grid-cols-8 gap-x-2 mb-4">
         <span class="w-full">Time Slot</span>
         {#if selectedDays != SELECTED_DAYS.ALL}
@@ -231,11 +241,14 @@
                 grid-row-start: {2 * i + 1};
             "
             >
-                {slot.toLocaleString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: true,
-                }).slice(0, -4).trim()}
+                {slot
+                    .toLocaleString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                    })
+                    .slice(0, -4)
+                    .trim()}
             </div>
         {/each}
 

@@ -51,5 +51,5 @@
 
     <Daypicker bind:selectedDays={days}/>
 
-    <button class="btn w-full"> Add </button>
+    <button class="btn w-full btn-primary"> Add </button>
 </form>
