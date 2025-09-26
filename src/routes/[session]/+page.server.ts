@@ -6,6 +6,27 @@ import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
 import { type ParsedItem } from "$lib/types"
 
+export type UserWithItems =  {
+    items: {
+        start: Date;
+        end: Date;
+        days: (boolean | null)[];
+        user: number;
+        id: number;
+        name: string | null;
+        monday: boolean | null;
+        tuesday: boolean | null;
+        wednesday: boolean | null;
+        thursday: boolean | null;
+        friday: boolean | null;
+        saturday: boolean | null;
+        sunday: boolean | null;
+    }[];
+    id: number;
+    name: string | null;
+    password: string | null;
+    group: number;
+}
 
 enum Day {
     SUNDAY = 0, MONDAY = 1, TUESDAY = 2, WEDNESDAY = 3, THURSDAY = 4, FRIDAY = 5, SATURDAY = 6
@@ -121,9 +142,10 @@ function isInSlot(item: ParsedItem, slotStart: Date): boolean {
 function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
     const base = new Date()
-    base.setHours(5, 0, 0, 0)
-    for (let i = 0; i < 15 * 2 + 1; i++) {
+    base.setHours(4, 0, 0, 0)
+    for (let i = 0; i < 20 * 2 + 1 ; i++) {
         const time = new Date(base.getTime() + i * 30 * 60 * 1000);
+        console.log(time.getHours(), time.getMinutes())
         slots.push(time)
     }
     return slots;
@@ -148,7 +170,7 @@ function assignSlots(items: ParsedItem[], slots: Date[], day: Day) {
 }
 
 // We want to join as much adjacent slots as possible
-function generateSubsets(slots: Date[], assignedSlots: ReturnType<typeof assignSlots>) {
+function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof assignSlots>) {
     const toRet = []
     let left = 0
 
@@ -212,21 +234,16 @@ export const load: PageLoad = async ({ params }) => {
     const items = mappedUsers.map((user) => user.items).flat()
     const slots = generateSlots(items)
 
+    const slotsWithItems = [0,1,2,3,4,5,6].map(i => assignSlots(items, slots, i))
+    const itemGroups = slotsWithItems.map(s => generateEventGroups(slots, s))
+
     return {
         session: params.session,
         group: group[0],
         users: mappedUsers,
         items: items,
         slots: slots,
-        groups: [
-            generateSubsets(slots, assignSlots(items, slots, Day.SUNDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.MONDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.TUESDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.WEDNESDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.THURSDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.FRIDAY)),
-            generateSubsets(slots, assignSlots(items, slots, Day.SATURDAY)),
-        ]
+        groups: itemGroups
     }
 }
 

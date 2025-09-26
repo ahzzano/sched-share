@@ -222,7 +222,7 @@
         {/if}
     </div>
     <div
-        class="grid grid-cols-[80px_2em] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
+        class="grid grid-cols-[80px_2em] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(41,1.5em)] bg-calendar-lines relative"
     >
         {#each everyOtherSlot as slot, i}
             <div
@@ -235,7 +235,7 @@
                     hour: "2-digit",
                     minute: "2-digit",
                     hour12: true,
-                })}
+                }).slice(0, -4).trim()}
             </div>
         {/each}
 
