@@ -5,7 +5,8 @@
         title,
         open = $bindable(false),
         modalClass = "",
-        modalContentClass = ""
+        modalContentClass = "",
+        haveCloseButton = false,
     } = $props();
 
     let isOpen = $derived(open);
@@ -31,6 +32,11 @@
             <div class="py-2">
                 {@render children?.()}
             </div>
+            {#if haveCloseButton}
+                <div class="modal-action">
+                    <button class="btn btn-primary" onclick={toggle}>Close</button>
+                </div>
+            {/if}
         </div>
     </div>
 {/if}

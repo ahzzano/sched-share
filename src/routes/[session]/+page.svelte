@@ -205,11 +205,14 @@
                     <button class="btn">Add User</button>
                 </div>
             </form>
-            <Modal title="Delete Users" prompt="Delete User">
+            <Modal title="Delete Users" prompt="Delete User" haveCloseButton={true}>
                 <div class="flex flex-col">
                     {#each users as user}
                         <span>
                             {user.name}
+                            <button>
+                            Delete
+                            </button>
                         </span>
                     {/each}
                 </div>
