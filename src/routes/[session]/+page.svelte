@@ -59,12 +59,29 @@
             .map((i) => findUser(i))
             .filter((i) => i != null || i != undefined);
     }
+
+    let isMobile = $state(false);
+
+    $effect(() => {
+        const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+        const update = () => (isMobile = mediaQuery.matches);
+        update(); // initial
+
+        mediaQuery.addEventListener("change", update);
+        return () => mediaQuery.removeEventListener("change", update);
+    });
+
+    $effect(() => {
+        if (!isMobile) {
+            selectedDays = SELECTED_DAYS.ALL;
+        } else {
+            selectedDays = SELECTED_DAYS.MONDAY;
+        }
+    });
 </script>
 
-<Modal
-    title="Colliding Schedules"
-    bind:open={openGroupModal}
->
+<Modal title="Colliding Schedules" bind:open={openGroupModal}>
     <div class="flex gap-2 flex-col">
         {#each openUsers as user}
             <div
@@ -192,10 +209,12 @@
     </div>
 </div>
 <div class="w-full md:py-32 py-8 px-8 md:px-48">
-    <div class="grid grid-cols-2 md:grid-cols-8 gap-2 mb-4">
-        <span>Time Slot</span>
+    <div class="grid grid-cols-[80px_1fr] md:grid-cols-8 gap-x-2 mb-4">
+        <span class="w-full">Time Slot</span>
         {#if selectedDays != SELECTED_DAYS.ALL}
-            {days[selectedDays]}
+            <span class="text-center w-full">
+                {days[selectedDays]}
+            </span>
         {:else}
             {#each days as day}
                 <span class="text-center">{day}</span>
@@ -203,7 +222,7 @@
         {/if}
     </div>
     <div
-        class="grid grid-cols-2 md:grid-cols-8 gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
+        class="grid grid-cols-[80px_2em] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(30,1.5em)] bg-calendar-lines relative"
     >
         {#each everyOtherSlot as slot, i}
             <div
@@ -226,7 +245,7 @@
                     <div
                         role="button"
                         tabindex="0"
-                        class="bg-green-100 hover:bg-green-200 rounded-2xl my-2"
+                        class="bg-green-100 hover:bg-green-200 rounded-2xl my-2 mx-3 md:mx-0"
                         style="
                             grid-column: {col + 2};
                             grid-row-start: {slot.start + 1}; 
