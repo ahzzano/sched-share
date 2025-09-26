@@ -6,6 +6,7 @@
     import { type ParsedItem } from "$lib/types";
     import { SELECTED_DAYS } from "../../types";
     import type { PageProps } from "./$types";
+    import { onMount } from "svelte";
 
     let { data }: PageProps = $props();
     const users = $derived(data.users);
@@ -60,7 +61,10 @@
     }
 </script>
 
-<Modal title="Colliding Schedules" bind:open={openGroupModal} modalContentClass="">
+<Modal
+    title="Colliding Schedules"
+    bind:open={openGroupModal}
+>
     <div class="flex gap-2 flex-col">
         {#each openUsers as user}
             <div
