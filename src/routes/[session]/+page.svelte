@@ -205,14 +205,16 @@
                     <button class="btn">Add User</button>
                 </div>
             </form>
-            <Modal title="Delete Users" prompt="Delete User" haveCloseButton={true}>
+            <Modal
+                title="Delete Users"
+                prompt="Delete User"
+                haveCloseButton={true}
+            >
                 <div class="flex flex-col">
                     {#each users as user}
                         <span>
                             {user.name}
-                            <button>
-                            Delete
-                            </button>
+                            <button> Delete </button>
                         </span>
                     {/each}
                 </div>
@@ -258,6 +260,7 @@
         {#each groups as group, col}
             {#if selectedDays == SELECTED_DAYS.ALL || selectedDays == col}
                 {#each group as slot}
+                    {@const uniqueGroupUsers = uniqueUsers(slot.items)}
                     <div
                         role="button"
                         tabindex="0"
@@ -272,9 +275,14 @@
                             openItems = slot.items;
                         }}
                     >
-                        <div class="p-4">
-                            {#each uniqueUsers(slot.items) as user}
-                                <div>
+                        <div class="p-4 flex flex-col">
+                            <span class="mb-4">
+                                <span class="font-bold"
+                                    >{uniqueGroupUsers.length}</span
+                                > Users
+                            </span>
+                            {#each uniqueGroupUsers.slice(0, 5) as user}
+                                <div class="overflow-hidden text-ellipsis">
                                     {user.name}
                                 </div>
                             {/each}
