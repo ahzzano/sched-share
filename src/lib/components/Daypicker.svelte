@@ -1,5 +1,7 @@
 <script lang="ts">
-    let selectedDays = [false, false, false, false, false, false, false];
+    // let selectedDays = [false, false, false, false, false, false, false];
+    let { selectedDays = $bindable([false, false, false, false, false, false, false]) } =
+        $props();
     let textToDisplay = ["S", "M", "T", "W", "T", "F", "S"];
 </script>
 
