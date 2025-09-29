@@ -279,6 +279,7 @@
             {#if viewableDay == SELECTED_DAYS.ALL || viewableDay == col}
                 {#each group as slot}
                     {@const uniqueGroupUsers = uniqueUsers(slot.items)}
+                    {@const nUsers = uniqueGroupUsers.length}
                     <div
                         role="button"
                         tabindex="0"
@@ -295,7 +296,7 @@
                         }}
                     >
                         <div class="p-4 flex flex-col">
-                            <span class="mb-4">
+                            <span>
                                 <span class="font-bold"
                                     >{uniqueGroupUsers.length}</span
                                 > Users
@@ -305,6 +306,9 @@
                                     {user.name}
                                 </div>
                             {/each}
+                            {#if nUsers > 5}
+                                <span>...</span>
+                            {/if}
                         </div>
                     </div>
                 {/each}
