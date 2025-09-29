@@ -219,7 +219,16 @@
                                 {user.name}
                             </span>
 
-                            <form action="?/deleteUser" method="POST">
+                            <form
+                                action="?/deleteUser"
+                                method="POST"
+                                use:enhance={() => {
+                                    return async ({ update, result }) => {
+                                        invalidateAll();
+                                        await update();
+                                    };
+                                }}
+                            >
                                 <input hidden value={user.id} name="id" />
                                 <button class="btn btn-error"> Delete </button>
                             </form>
