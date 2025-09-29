@@ -214,9 +214,12 @@
             >
                 <div class="flex flex-col">
                     {#each users as user}
+                        <form action="?/deleteUser" method="POST">
+                            <input hidden value={user.id} name="id" />
+                            <button class="btn btn-error"> Delete </button>
+                        </form>
                         <span>
                             {user.name}
-                            <button> Delete </button>
                         </span>
                     {/each}
                 </div>
