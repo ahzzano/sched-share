@@ -1,10 +1,12 @@
 <script lang="ts">
     let {
         children,
-        hasPrompt = true,
         prompt = "",
         title,
-        open = $bindable(true),
+        open = $bindable(false),
+        modalClass = "",
+        modalContentClass = "",
+        haveCloseButton = false,
     } = $props();
 
     let isOpen = $derived(open);
@@ -13,15 +15,15 @@
     }
 </script>
 
-{#if hasPrompt}
+{#if prompt.length > 0}
     <button class="btn" onclick={toggle}>
         {prompt}
     </button>
 {/if}
 
 {#if isOpen}
-    <div class="modal modal-open">
-        <div class="modal-box">
+    <div class="modal modal-open {modalClass}">
+        <div class="modal-box {modalContentClass}">
             <button
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onclick={toggle}>✕</button
@@ -30,6 +32,11 @@
             <div class="py-2">
                 {@render children?.()}
             </div>
+            {#if haveCloseButton}
+                <div class="modal-action">
+                    <button class="btn btn-primary" onclick={toggle}>Close</button>
+                </div>
+            {/if}
         </div>
     </div>
 {/if}

@@ -2,159 +2,351 @@
     import { enhance } from "$app/forms";
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
-    import ItemSection from "$lib/components/ItemSection.svelte";
     import Modal from "$lib/components/Modal.svelte";
+    import { type ParsedItem } from "$lib/types";
+    import { SELECTED_DAYS } from "../../types";
     import type { PageProps } from "./$types";
+    import { onMount } from "svelte";
 
     let { data }: PageProps = $props();
     const users = $derived(data.users);
     const group = $derived(data.group);
+    const slots = $derived(data.slots);
+    const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
+    const groups = $derived(data.groups);
 
-    let editFormOpen = $state(false);
-    let currentItem = $state(null);
+    let openGroupModal = $state(false);
 
-    function onEdit(item) {
-        editFormOpen = true;
-        currentItem = item;
+    let viewableDay = $state(SELECTED_DAYS.ALL);
+    let selectedDay = $state(SELECTED_DAYS.SUNDAY);
+
+    const days = [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+    ];
+
+    let openItems: ParsedItem[] = $state([]);
+    const openUsers = $derived.by(() => {
+        let toRet = [];
+        for (const item of openItems) {
+            let userId = item.user;
+            let user = findUser(userId);
+            if (!user) {
+                continue;
+            }
+            if (toRet.filter((ret) => ret.id == userId).length > 0) {
+                continue;
+            }
+            toRet.push(user);
+        }
+
+        return toRet;
+    });
+
+    function findUser(id: number) {
+        return users.find((user) => user.id == id);
     }
+
+    function uniqueUsers(items: ParsedItem[]) {
+        const users = items.map((item) => item.user);
+        const uniqueUsers = new Set(users);
+        const usersList = Array.from(uniqueUsers);
+
+        return usersList
+            .map((i) => findUser(i))
+            .filter((i) => i != null || i != undefined);
+    }
+
+    let isMobile = $state(false);
+
+    $effect(() => {
+        const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+        const update = () => (isMobile = mediaQuery.matches);
+        update(); // initial
+
+        mediaQuery.addEventListener("change", update);
+        return () => mediaQuery.removeEventListener("change", update);
+    });
+
+    $effect(() => {
+        if (!isMobile) {
+            viewableDay = SELECTED_DAYS.ALL;
+        } else {
+            viewableDay = selectedDay;
+        }
+    });
 </script>
 
-<Modal hasPrompt={false} prompt="" title={"Edit Item"} bind:open={editFormOpen}>
-    <form
-        class="w-1/4"
-        action="?/deleteSchedule"
-        method="POST"
-        use:enhance={() => {
-            return async ({ update }) => {
-                editFormOpen = false;
-                invalidateAll();
-                await update();
-            };
-        }}
-    >
-        {#if currentItem}
-            <input type="hidden" name="id" value={currentItem.id} />
-            <button class="btn btn-ghost btn-sm btn-error">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 448 512"
-                    class="h-4 w-4"
-                    ><path
-                        d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zm72 200l176 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-176 0c-13.3 0-24-10.7-24-24s10.7-24 24-24z"
-                    /></svg
-                >
+<Modal title="Colliding Schedules" bind:open={openGroupModal}>
+    <div class="flex gap-2 flex-col">
+        {#each openUsers as user}
+            <div
+                class="collapse collapse-arrow bg-base-100 border border-base-300"
+            >
+                <input type="checkbox" name="accordion" checked={false} />
+                <div class="collapse-title font-semibold">{user.name}</div>
+                <div class="collapse-content">
+                    {#each openItems.filter((item) => item.user == user.id) as item}
+                        <div class="w-full flex items-center">
+                            <div
+                                class="w-1/2 flex gap-3 justify-start items-center"
+                            >
+                                <span class="w-2/3">{item.name}</span>
+                                <form
+                                    action="?/deleteSchedule"
+                                    method="POST"
+                                    use:enhance={() => {
+                                        return async ({ update }) => {
+                                            openGroupModal = false;
+                                            await update();
+                                            invalidateAll();
+                                        };
+                                    }}
+                                >
+                                    <input value={item.id} name="id" hidden />
+                                    <button
+                                        class="w-10 hover:bg-red-200 p-2 rounded"
+                                        aria-label="delete-item"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 640 512"
+                                            class="w-6"
+                                            ><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path
+                                                d="M136.4 128a120 120 0 1 1 240 0 120 120 0 1 1 -240 0zm-88 354.3c0-98.5 79.8-178.3 178.3-178.3l59.4 0c98.5 0 178.3 79.8 178.3 178.3 0 16.4-13.3 29.7-29.7 29.7L78.1 512c-16.4 0-29.7-13.3-29.7-29.7zM612.3 124.1c9.4 9.4 9.4 24.6 0 33.9l-33.9 33.9 33.9 33.9c9.4 9.4 9.4 24.6 0 33.9s-24.6 9.4-33.9 0l-33.9-33.9-33.9 33.9c-9.4 9.4-24.6 9.4-33.9 0s-9.4-24.6 0-33.9l33.9-33.9-33.9-33.9c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l33.9 33.9 33.9-33.9c9.4-9.4 24.6-9.4 33.9 0z"
+                                            /></svg
+                                        >
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="w-1/2 flex gap-1 justify-end">
+                                <span>
+                                    {item.start.toLocaleString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    })}
+                                </span>
+                                <span> - </span>
+                                <span>
+                                    {item.end.toLocaleString([], {
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                        hour12: true,
+                                    })}
+                                </span>
+                            </div>
+                        </div>
+                    {/each}
+                </div>
+            </div>
+        {/each}
+        <div class="card-actions justify-end">
+            <button
+                class="btn btn-primary"
+                onclick={() => {
+                    openGroupModal = false;
+                }}
+            >
+                Close
             </button>
-        {/if}
-    </form>
+        </div>
+    </div>
 </Modal>
 
 <div
-    class="flex flex-col md:flex-row gap-2 w-full items-center justify-start md:p-12 p-8"
+    class="w-full flex flex-col md:flex-row items-center md:justify-center mt-8 md:mt-16 gap-4"
 >
-    <div class="flex flex-col text-center md:text-left">
-        {#if group.name}
-            <span class="text-2xl">{group.name}</span>
-        {:else}
-            <span class="text-2xl">No Group Name</span>
-        {/if}
-
-        <span> Add someone's schedule here </span>
-    </div>
-
-    <form
-        method="POST"
-        action="?/addUser"
-        class="md:ml-auto w-full md:w-128"
-        use:enhance={() => {
-            return async ({ update, result }) => {
-                invalidateAll();
-                await update();
-            };
-        }}
-    >
-        <div class="join w-full">
-            <input
-                name="username"
-                placeholder="Username: Don Pedro"
-                class="input"
-            />
-            <button class="btn">Add User</button>
-        </div>
-    </form>
-</div>
-
-<div
-    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 items-start p-8 md:p- gap-4"
->
-    {#each users as user}
-        <div class="card bg-base-100 shadow-sm w-full">
-            <div class="card-body">
-                <div class="card-title">
-                    <span class="grow-1">{user.name}</span>
-                    <form
-                        action="?/deleteUser"
-                        method="POST"
-                        use:enhance={() => {
-                            return async ({ update }) => {
-                                invalidateAll();
-                                await update();
-                            };
-                        }}
-                    >
-                        <input type="hidden" name="id" value={user.id} />
-                        <button
-                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 640 640"
-                                class="w-4 h-4"
-                                ><!--!Font Awesome Free v7.0.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path
-                                    d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"
-                                /></svg
-                            >
-                        </button>
-                    </form>
-                </div>
-
-                {#if user.items.length == 0}
-                    <div class="">No items to be found</div>
+    <div class="card shadow-sm rounded-2xl">
+        <div class="card-body">
+            <div class="flex flex-col text-left">
+                {#if group.name}
+                    <span class="text-2xl card-title">{group.name}</span>
                 {:else}
-                    <div class="join join-vertical">
-                        <ItemSection
-                            items={user.items.filter((item) => item.sunday)}
-                            title="Sunday"
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.monday)}
-                            title="Monday"
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.tuesday)}
-                            title="Tuesday"
-                            editCallback={onEdit}
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.wednesday)}
-                            title="Wednesday"
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.thursday)}
-                            title="Thursday"
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.friday)}
-                            title="Friday"
-                        />
-                        <ItemSection
-                            items={user.items.filter((item) => item.saturday)}
-                            title="Saturday"
-                        />
-                    </div>
+                    <span class="text-2xl card-title">No Group Name</span>
                 {/if}
 
-                <AddItemForm {user} />
+                <span> Add someone's schedule here </span>
             </div>
+
+            <AddItemForm {users} />
         </div>
+    </div>
+
+    <div class="card shadow-sm rounded-2xl">
+        <div class="card-body">
+            <span class="card-title">Add Users</span>
+            <div class="flex gap-2">
+                {#each users as user}
+                    <span>{user.name}</span>
+                {/each}
+            </div>
+            <form
+                method="POST"
+                action="?/addUser"
+                class="w-full"
+                use:enhance={() => {
+                    return async ({ update, result }) => {
+                        invalidateAll();
+                        await update();
+                    };
+                }}
+            >
+                <div class="join w-full">
+                    <input
+                        name="username"
+                        placeholder="Username: Don Pedro"
+                        class="input w-full"
+                    />
+                    <button class="btn">Add User</button>
+                </div>
+            </form>
+            <Modal
+                title="Delete Users"
+                prompt="Delete User"
+                haveCloseButton={true}
+            >
+                <div class="flex flex-col gap-2">
+                    {#each users as user}
+                        <div class="flex hover:bg-base-200 items-center">
+                            <span class="w-full">
+                                {user.name}
+                            </span>
+
+                            <form
+                                action="?/deleteUser"
+                                method="POST"
+                                use:enhance={() => {
+                                    return async ({ update, result }) => {
+                                        invalidateAll();
+                                        await update();
+                                    };
+                                }}
+                            >
+                                <input hidden value={user.id} name="id" />
+                                <button class="btn btn-error"> Delete </button>
+                            </form>
+                        </div>
+                    {/each}
+                </div>
+            </Modal>
+        </div>
+    </div>
+</div>
+
+<div class="w-full px-2 md:hidden flex justify-center mt-4 gap-4">
+    {#each days as day, i}
+        {#if i == selectedDay}
+            <button
+                class="btn btn-primary btn-circle"
+                onclick={() => {
+                    selectedDay = i;
+                }}
+            >
+                {day[0]}
+            </button>
+        {:else}
+            <button
+                class="btn btn-circle"
+                onclick={() => {
+                    selectedDay = i;
+                }}
+            >
+                {day[0]}
+            </button>
+        {/if}
     {/each}
 </div>
+
+<div class="w-full md:py-32 py-8 px-8 md:px-48 flex flex-col">
+    <div class="grid grid-cols-[80px_1fr] md:grid-cols-8 gap-x-2 mb-4">
+        <span class="w-full">Time Slot</span>
+        {#if viewableDay != SELECTED_DAYS.ALL}
+            <span class="text-center w-full">
+                {days[viewableDay]}
+            </span>
+        {:else}
+            {#each days as day}
+                <span class="text-center">{day}</span>
+            {/each}
+        {/if}
+    </div>
+    <div
+        class="grid grid-cols-[80px_1fr] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(41,1.5em)] bg-calendar-lines relative"
+    >
+        {#each everyOtherSlot as slot, i}
+            <div
+                class="col-1 row-span-2 w-full h-full text-gray-500"
+                style="
+                grid-row-start: {2 * i + 1};
+            "
+            >
+                {slot
+                    .toLocaleString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                    })
+                    .slice(0, -4)
+                    .trim()}
+            </div>
+        {/each}
+
+        {#each groups as group, col}
+            {#if viewableDay == SELECTED_DAYS.ALL || viewableDay == col}
+                {#each group as slot}
+                    {@const uniqueGroupUsers = uniqueUsers(slot.items)}
+                    {@const nUsers = uniqueGroupUsers.length}
+                    <div
+                        role="button"
+                        tabindex="0"
+                        class="bg-green-100 hover:bg-green-200 rounded-xl my-2
+                        mx-3 md:mx-0"
+                        style="
+                            grid-column: {isMobile ? 2 : col + 2};
+                            grid-row-start: {slot.start + 1}; 
+                            grid-row-end: {slot.end + 2};"
+                        onkeypress={() => {}}
+                        onclick={() => {
+                            openGroupModal = true;
+                            openItems = slot.items;
+                        }}
+                    >
+                        <div class="p-4 flex flex-col">
+                            <span>
+                                <span class="font-bold"
+                                    >{uniqueGroupUsers.length}</span
+                                > Users
+                            </span>
+                            {#each uniqueGroupUsers.slice(0, 5) as user}
+                                <div class="overflow-hidden text-ellipsis">
+                                    {user.name}
+                                </div>
+                            {/each}
+                            {#if nUsers > 5}
+                                <span>...</span>
+                            {/if}
+                        </div>
+                    </div>
+                {/each}
+            {/if}
+        {/each}
+    </div>
+</div>
+
+<style>
+    .bg-calendar-lines {
+        z-index: 0;
+        background-image: repeating-linear-gradient(
+            to bottom,
+            #e5e7eb 0px 1px,
+            transparent 1px 1.5em
+        );
+    }
+</style>
