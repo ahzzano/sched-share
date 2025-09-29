@@ -17,7 +17,9 @@
 
     let openGroupModal = $state(false);
 
-    let selectedDays = $state(SELECTED_DAYS.ALL);
+    let viewableDay = $state(SELECTED_DAYS.ALL);
+    let selectedDay = $state(SELECTED_DAYS.SUNDAY);
+
     const days = [
         "Sunday",
         "Monday",
@@ -74,9 +76,9 @@
 
     $effect(() => {
         if (!isMobile) {
-            selectedDays = SELECTED_DAYS.ALL;
+            viewableDay = SELECTED_DAYS.ALL;
         } else {
-            selectedDays = SELECTED_DAYS.MONDAY;
+            viewableDay = selectedDay;
         }
     });
 </script>
@@ -223,12 +225,25 @@
     </div>
 </div>
 
+<div class="w-full px-2 md:hidden flex justify-start">
+    {#each days as day, i}
+        <button
+            class="btn"
+            onclick={() => {
+                selectedDay = i;
+            }}
+        >
+            {day[0]}
+        </button>
+    {/each}
+</div>
+
 <div class="w-full md:py-32 py-8 px-8 md:px-48 flex flex-col">
     <div class="grid grid-cols-[80px_1fr] md:grid-cols-8 gap-x-2 mb-4">
         <span class="w-full">Time Slot</span>
-        {#if selectedDays != SELECTED_DAYS.ALL}
+        {#if viewableDay != SELECTED_DAYS.ALL}
             <span class="text-center w-full">
-                {days[selectedDays]}
+                {days[viewableDay]}
             </span>
         {:else}
             {#each days as day}
@@ -237,7 +252,7 @@
         {/if}
     </div>
     <div
-        class="grid grid-cols-[80px_2em] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(41,1.5em)] bg-calendar-lines relative"
+        class="grid grid-cols-[80px_1fr] md:grid-cols-8 md:gap-x-2 [grid-template-rows:repeat(41,1.5em)] bg-calendar-lines relative"
     >
         {#each everyOtherSlot as slot, i}
             <div
@@ -258,15 +273,16 @@
         {/each}
 
         {#each groups as group, col}
-            {#if selectedDays == SELECTED_DAYS.ALL || selectedDays == col}
+            {#if viewableDay == SELECTED_DAYS.ALL || viewableDay == col}
                 {#each group as slot}
                     {@const uniqueGroupUsers = uniqueUsers(slot.items)}
                     <div
                         role="button"
                         tabindex="0"
-                        class="bg-green-100 hover:bg-green-200 rounded-2xl my-2 mx-3 md:mx-0"
+                        class="bg-green-100 hover:bg-green-200 rounded-xl my-2
+                        mx-3 md:mx-0"
                         style="
-                            grid-column: {col + 2};
+                            grid-column: {isMobile ? 2 : col + 2};
                             grid-row-start: {slot.start + 1}; 
                             grid-row-end: {slot.end + 2};"
                         onkeypress={() => {}}
