@@ -212,15 +212,18 @@
                 prompt="Delete User"
                 haveCloseButton={true}
             >
-                <div class="flex flex-col">
+                <div class="flex flex-col gap-2">
                     {#each users as user}
-                        <form action="?/deleteUser" method="POST">
-                            <input hidden value={user.id} name="id" />
-                            <button class="btn btn-error"> Delete </button>
-                        </form>
-                        <span>
-                            {user.name}
-                        </span>
+                        <div class="flex hover:bg-base-200 items-center">
+                            <span class="w-full">
+                                {user.name}
+                            </span>
+
+                            <form action="?/deleteUser" method="POST">
+                                <input hidden value={user.id} name="id" />
+                                <button class="btn btn-error"> Delete </button>
+                            </form>
+                        </div>
                     {/each}
                 </div>
             </Modal>
