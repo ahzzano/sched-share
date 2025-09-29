@@ -231,16 +231,27 @@
     </div>
 </div>
 
-<div class="w-full px-2 md:hidden flex justify-start">
+<div class="w-full px-2 md:hidden flex justify-center mt-4 gap-4">
     {#each days as day, i}
-        <button
-            class="btn"
-            onclick={() => {
-                selectedDay = i;
-            }}
-        >
-            {day[0]}
-        </button>
+        {#if i == selectedDay}
+            <button
+                class="btn btn-primary btn-circle"
+                onclick={() => {
+                    selectedDay = i;
+                }}
+            >
+                {day[0]}
+            </button>
+        {:else}
+            <button
+                class="btn btn-circle"
+                onclick={() => {
+                    selectedDay = i;
+                }}
+            >
+                {day[0]}
+            </button>
+        {/if}
     {/each}
 </div>
 
