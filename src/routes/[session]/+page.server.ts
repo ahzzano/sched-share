@@ -134,6 +134,11 @@ function convertToDate(timeString: string) {
     return date
 }
 
+function toFixedUtcDate(timeString: string): Date {
+  const [h, m] = timeString.split(":").map(Number)
+  return new Date(`1970-01-01T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`)
+}
+
 function isInSlot(item: ParsedItem, slotStart: Date): boolean {
     const slotEnd = new Date(slotStart.getTime() + 30 * 60 * 1000);
     return item.start < slotEnd && item.end > slotStart
@@ -141,8 +146,9 @@ function isInSlot(item: ParsedItem, slotStart: Date): boolean {
 
 function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
-    const base = new Date()
-    base.setHours(4, 0, 0, 0)
+    // const base = new Date()
+    // base.setHours(4, 0, 0, 0)
+    const base = new Date(Date.UTC(1970, 0, 1, 4, 0, 0, 0))
     for (let i = 0; i < 20 * 2 + 1 ; i++) {
         const time = new Date(base.getTime() + i * 30 * 60 * 1000);
         console.log(time.getHours(), time.getMinutes())
@@ -217,8 +223,8 @@ export const load: PageLoad = async ({ params }) => {
         ...row,
         items: row.items.map((item) => ({
             ...item,
-            start: convertToDate(item.start),
-            end: convertToDate(item.end),
+            start:toFixedUtcDate(item.start),
+            end: toFixedUtcDate(item.end),
             days: [
                 item.sunday,
                 item.monday,

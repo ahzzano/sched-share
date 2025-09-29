@@ -131,6 +131,7 @@
                                         hour: "2-digit",
                                         minute: "2-digit",
                                         hour12: true,
+                                        timeZone: "UTC",
                                     })}
                                 </span>
                                 <span> - </span>
@@ -139,6 +140,7 @@
                                         hour: "2-digit",
                                         minute: "2-digit",
                                         hour12: true,
+                                        timeZone: "UTC",
                                     })}
                                 </span>
                             </div>
@@ -292,6 +294,7 @@
                         hour: "2-digit",
                         minute: "2-digit",
                         hour12: true,
+                        timeZone: "UTC",
                     })
                     .slice(0, -4)
                     .trim()}
