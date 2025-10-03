@@ -53,16 +53,6 @@
         return users.find((user) => user.id == id);
     }
 
-    function uniqueUsers(items: ParsedItem[]) {
-        const users = items.map((item) => item.user);
-        const uniqueUsers = new Set(users);
-        const usersList = Array.from(uniqueUsers);
-
-        return usersList
-            .map((i) => findUser(i))
-            .filter((i) => i != null || i != undefined);
-    }
-
     let isMobile = $state(false);
 
     $effect(() => {

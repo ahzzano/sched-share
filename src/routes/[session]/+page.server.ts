@@ -69,7 +69,6 @@ export const actions = {
         }
         const startTime = form.get('startTime')
         const endTime = form.get('endTime')
-        console.log(startTime, endTime)
 
         const result = itemSchema.safeParse({
             user: parseInt(id.toString()),
@@ -153,7 +152,6 @@ function generateSlots(items: ParsedItem[]): Date[] {
     const base = new Date(Date.UTC(1970, 0, 1, 4, 0, 0, 0))
     for (let i = 0; i < 20 * 2 + 1 ; i++) {
         const time = new Date(base.getTime() + i * 30 * 60 * 1000);
-        console.log(time.getHours(), time.getMinutes())
         slots.push(time)
     }
     return slots;
@@ -206,7 +204,6 @@ function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof ass
                 .filter((i) => i != null || i!= undefined)
 
             if (items.length != 0) {
-                console.log(left, right)
                 toRet.push({ start: left, end: right, items: uniqueItems, users: users})
                 items = []
             }
