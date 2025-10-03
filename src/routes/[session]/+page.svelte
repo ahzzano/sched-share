@@ -14,6 +14,7 @@
     const slots = $derived(data.slots);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
+    console.log(groups[1])
 
     let openGroupModal = $state(false);
 
@@ -304,8 +305,7 @@
         {#each groups as group, col}
             {#if viewableDay == SELECTED_DAYS.ALL || viewableDay == col}
                 {#each group as slot}
-                    {@const uniqueGroupUsers = uniqueUsers(slot.items)}
-                    {@const nUsers = uniqueGroupUsers.length}
+                    {@const nUsers = slot.users.length}
                     <div
                         role="button"
                         tabindex="0"
@@ -324,10 +324,10 @@
                         <div class="p-4 flex flex-col">
                             <span>
                                 <span class="font-bold"
-                                    >{uniqueGroupUsers.length}</span
+                                    >{nUsers}</span
                                 > Users
                             </span>
-                            {#each uniqueGroupUsers.slice(0, 5) as user}
+                            {#each slot.users.slice(0,5) as user}
                                 <div class="overflow-hidden text-ellipsis">
                                     {user.name}
                                 </div>

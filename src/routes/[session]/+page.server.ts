@@ -5,6 +5,8 @@ import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
 import { type ParsedItem } from "$lib/types"
+import { unique } from "drizzle-orm/gel-core"
+import { map } from "zod"
 
 export type UserWithItems =  {
     items: {
@@ -175,8 +177,18 @@ function assignSlots(items: ParsedItem[], slots: Date[], day: Day) {
     return toRet
 }
 
+// function uniqueUsers(items: ParsedItem[]) {
+//     const users = items.map((item) => item.user);
+//     const uniqueUsers = new Set(users);
+//     const usersList = Array.from(uniqueUsers);
+//
+//     return usersList
+//         .map((i) => findUser(i))
+//         .filter((i) => i != null || i != undefined);
+// }
+
 // We want to join as much adjacent slots as possible
-function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof assignSlots>) {
+function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof assignSlots>, groupUsers: UserWithItems[]) {
     const toRet = []
     let left = 0
 
@@ -188,9 +200,14 @@ function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof ass
             const ids = new Set();
             const uniqueItems = items.filter(({ id }) => !ids.has(id) && ids.add(id));
 
+            const uniqueUsers = new Set(items.map((item) => item.user))
+            const users = Array.from(uniqueUsers)
+                .map(id => groupUsers.find((user) => user.id == id))
+                .filter((i) => i != null || i!= undefined)
+
             if (items.length != 0) {
                 console.log(left, right)
-                toRet.push({ start: left, end: right, items: uniqueItems })
+                toRet.push({ start: left, end: right, items: uniqueItems, users: users})
                 items = []
             }
             left = right
@@ -241,7 +258,7 @@ export const load: PageLoad = async ({ params }) => {
     const slots = generateSlots(items)
 
     const slotsWithItems = [0,1,2,3,4,5,6].map(i => assignSlots(items, slots, i))
-    const itemGroups = slotsWithItems.map(s => generateEventGroups(slots, s))
+    const itemGroups = slotsWithItems.map(s => generateEventGroups(slots, s, groupUsers))
 
     return {
         session: params.session,
