@@ -6,15 +6,14 @@
     import { type ParsedItem } from "$lib/types";
     import { SELECTED_DAYS } from "../../types";
     import type { PageProps } from "./$types";
-    import { onMount } from "svelte";
 
     let { data }: PageProps = $props();
+
     const users = $derived(data.users);
     const group = $derived(data.group);
     const slots = $derived(data.slots);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
-    console.log(groups[1])
 
     let openGroupModal = $state(false);
 

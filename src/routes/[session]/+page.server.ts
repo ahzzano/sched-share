@@ -175,16 +175,6 @@ function assignSlots(items: ParsedItem[], slots: Date[], day: Day) {
     return toRet
 }
 
-// function uniqueUsers(items: ParsedItem[]) {
-//     const users = items.map((item) => item.user);
-//     const uniqueUsers = new Set(users);
-//     const usersList = Array.from(uniqueUsers);
-//
-//     return usersList
-//         .map((i) => findUser(i))
-//         .filter((i) => i != null || i != undefined);
-// }
-
 // We want to join as much adjacent slots as possible
 function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof assignSlots>, groupUsers: UserWithItems[]) {
     const toRet = []
