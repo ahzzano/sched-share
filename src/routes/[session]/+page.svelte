@@ -12,6 +12,7 @@
     const users = $derived(data.users);
     const group = $derived(data.group);
     const slots = $derived(data.slots);
+    const idToName = $derived(data.idToName);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
 
@@ -34,23 +35,12 @@
     const openUsers = $derived.by(() => {
         let toRet = [];
         for (const item of openItems) {
-            let userId = item.user;
-            let user = findUser(userId);
-            if (!user) {
-                continue;
-            }
-            if (toRet.filter((ret) => ret.id == userId).length > 0) {
-                continue;
-            }
-            toRet.push(user);
+            const userId = item.user;
+            toRet.push(idToName.get(userId));
         }
 
         return toRet;
     });
-
-    function findUser(id: number) {
-        return users.find((user) => user.id == id);
-    }
 
     let isMobile = $state(false);
 

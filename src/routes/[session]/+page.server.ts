@@ -251,6 +251,10 @@ export const load: PageLoad = async ({ params }) => {
         session: params.session,
         group: group[0],
         users: mappedUsers,
+        idToName: new Map(mappedUsers.map((user) => [user.id, {
+            name: user.name,
+            id: user.id
+        }])),
         items: items,
         slots: slots,
         groups: itemGroups
