@@ -33,13 +33,13 @@
 
     let openItems: ParsedItem[] = $state([]);
     const openUsers = $derived.by(() => {
-        let toRet = [];
+        let toRet = new Set();
         for (const item of openItems) {
             const userId = item.user;
-            toRet.push(idToName.get(userId));
+            toRet.add(idToName.get(userId))
         }
 
-        return toRet;
+        return Array.from(toRet);
     });
 
     let isMobile = $state(false);
