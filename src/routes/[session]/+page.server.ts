@@ -122,7 +122,7 @@ function isInSlot(item: ParsedItem, slotStart: Date): boolean {
     return item.start < slotEnd && item.end > slotStart
 }
 
-function generateSlots(items: ParsedItem[]): Date[] {
+function generateSlots(): Date[] {
     const slots = []
     for (let i = 0; i < N_HOURS * 2 + 1; i++) {
         const time = new Date(BASE_DATE.getTime() + i * 30 * 60 * 1000);
@@ -216,7 +216,7 @@ export const load: PageLoad = async ({ params }) => {
     }))
 
     const items = mappedUsers.map((user) => user.items).flat()
-    const slots = generateSlots(items)
+    const slots = generateSlots()
 
     const slotsWithItems = [0, 1, 2, 3, 4, 5, 6].map(i => assignSlots(items, slots, i))
     const itemGroups = slotsWithItems.map(s => generateEventGroups(slots, s, groupUsers))
