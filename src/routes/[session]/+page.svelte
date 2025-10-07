@@ -36,7 +36,7 @@
         let toRet = new Set();
         for (const item of openItems) {
             const userId = item.user;
-            toRet.add(idToName.get(userId))
+            toRet.add(idToName.get(userId));
         }
 
         return Array.from(toRet);
@@ -302,11 +302,9 @@
                     >
                         <div class="p-4 flex flex-col">
                             <span>
-                                <span class="font-bold"
-                                    >{nUsers}</span
-                                > Users
+                                <span class="font-bold">{nUsers}</span> Users
                             </span>
-                            {#each slot.users.slice(0,5) as user}
+                            {#each slot.users.slice(0, 5) as user}
                                 <div class="overflow-hidden text-ellipsis">
                                     {user.name}
                                 </div>

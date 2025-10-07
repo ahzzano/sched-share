@@ -33,9 +33,8 @@
         <input type="text" name="itemName" placeholder="Studying..." />
     </div>
 
-    <div class="flex flex-col md:flex-row w-full gap-2">
+    <div class="flex flex-row w-full gap-2">
         <div class="input w-full">
-            <span class="label">Start</span>
             <input
                 class="appearance-none"
                 type="time"
@@ -44,7 +43,6 @@
             />
         </div>
         <div class="input w-full">
-            <span class="label">End</span>
             <input type="time" name="endTime" required />
         </div>
     </div>
