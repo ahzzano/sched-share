@@ -4,31 +4,8 @@ import { eq } from "drizzle-orm"
 import type { PageLoad } from "./$types"
 import { error, fail, type Actions } from "@sveltejs/kit"
 import { itemSchema, userSchema } from "$lib/server/zodSchemas"
-import { type ParsedItem } from "$lib/types"
-import { unique } from "drizzle-orm/gel-core"
-import { map } from "zod"
-
-export type UserWithItems =  {
-    items: {
-        start: Date;
-        end: Date;
-        days: (boolean | null)[];
-        user: number;
-        id: number;
-        name: string | null;
-        monday: boolean | null;
-        tuesday: boolean | null;
-        wednesday: boolean | null;
-        thursday: boolean | null;
-        friday: boolean | null;
-        saturday: boolean | null;
-        sunday: boolean | null;
-    }[];
-    id: number;
-    name: string | null;
-    password: string | null;
-    group: number;
-}
+import { type ParsedItem, type UserWithItems} from "$lib/types"
+import { BASE_DATE, N_HOURS } from "$lib/consts"
 
 enum Day {
     SUNDAY = 0, MONDAY = 1, TUESDAY = 2, WEDNESDAY = 3, THURSDAY = 4, FRIDAY = 5, SATURDAY = 6
@@ -136,8 +113,8 @@ function convertToDate(timeString: string) {
 }
 
 function toFixedUtcDate(timeString: string): Date {
-  const [h, m] = timeString.split(":").map(Number)
-  return new Date(`1970-01-01T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`)
+    const [h, m] = timeString.split(":").map(Number)
+    return new Date(`1970-01-01T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00Z`)
 }
 
 function isInSlot(item: ParsedItem, slotStart: Date): boolean {
@@ -147,11 +124,8 @@ function isInSlot(item: ParsedItem, slotStart: Date): boolean {
 
 function generateSlots(items: ParsedItem[]): Date[] {
     const slots = []
-    // const base = new Date()
-    // base.setHours(4, 0, 0, 0)
-    const base = new Date(Date.UTC(1970, 0, 1, 4, 0, 0, 0))
-    for (let i = 0; i < 20 * 2 + 1 ; i++) {
-        const time = new Date(base.getTime() + i * 30 * 60 * 1000);
+    for (let i = 0; i < N_HOURS * 2 + 1; i++) {
+        const time = new Date(BASE_DATE.getTime() + i * 30 * 60 * 1000);
         slots.push(time)
     }
     return slots;
@@ -191,10 +165,10 @@ function generateEventGroups(slots: Date[], assignedSlots: ReturnType<typeof ass
             const uniqueUsers = new Set(items.map((item) => item.user))
             const users = Array.from(uniqueUsers)
                 .map(id => groupUsers.find((user) => user.id == id))
-                .filter((i) => i != null || i!= undefined)
+                .filter((i) => i != null || i != undefined)
 
             if (items.length != 0) {
-                toRet.push({ start: left, end: right, items: uniqueItems, users: users})
+                toRet.push({ start: left, end: right, items: uniqueItems, users: users })
                 items = []
             }
             left = right
@@ -227,7 +201,7 @@ export const load: PageLoad = async ({ params }) => {
         ...row,
         items: row.items.map((item) => ({
             ...item,
-            start:toFixedUtcDate(item.start),
+            start: toFixedUtcDate(item.start),
             end: toFixedUtcDate(item.end),
             days: [
                 item.sunday,
@@ -244,7 +218,7 @@ export const load: PageLoad = async ({ params }) => {
     const items = mappedUsers.map((user) => user.items).flat()
     const slots = generateSlots(items)
 
-    const slotsWithItems = [0,1,2,3,4,5,6].map(i => assignSlots(items, slots, i))
+    const slotsWithItems = [0, 1, 2, 3, 4, 5, 6].map(i => assignSlots(items, slots, i))
     const itemGroups = slotsWithItems.map(s => generateEventGroups(slots, s, groupUsers))
 
     return {

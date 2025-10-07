@@ -3,7 +3,8 @@
     import { invalidateAll } from "$app/navigation";
     import AddItemForm from "$lib/components/AddItemForm.svelte";
     import Modal from "$lib/components/Modal.svelte";
-    import { type ParsedItem } from "$lib/types";
+    import type { User } from "$lib/server/db/schema";
+    import { type ParsedItem, type UserWithItems } from "$lib/types";
     import { SELECTED_DAYS } from "../../types";
     import type { PageProps } from "./$types";
 
@@ -32,15 +33,16 @@
     ];
 
     let openItems: ParsedItem[] = $state([]);
-    const openUsers = $derived.by(() => {
-        let toRet = new Set();
-        for (const item of openItems) {
-            const userId = item.user;
-            toRet.add(idToName.get(userId));
-        }
-
-        return Array.from(toRet);
-    });
+    // const openUsers = $derived.by(() => {
+    //     let toRet = new Set();
+    //     for (const item of openItems) {
+    //         const userId = item.user;
+    //         toRet.add(idToName.get(userId));
+    //     }
+    //
+    //     return Array.from(toRet);
+    // });
+    let openUsers: User[] = $state([])
 
     let isMobile = $state(false);
 
@@ -298,6 +300,7 @@
                         onclick={() => {
                             openGroupModal = true;
                             openItems = slot.items;
+                            openUsers = slot.users
                         }}
                     >
                         <div class="p-4 flex flex-col">
