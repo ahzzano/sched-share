@@ -13,7 +13,6 @@
     const users = $derived(data.users);
     const group = $derived(data.group);
     const slots = $derived(data.slots);
-    const idToName = $derived(data.idToName);
     const everyOtherSlot = $derived(slots.filter((_, i) => i % 2 == 0));
     const groups = $derived(data.groups);
 
